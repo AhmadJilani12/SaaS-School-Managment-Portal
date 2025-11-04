@@ -1,0 +1,233 @@
+.authContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.authCard {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1a1a1a;
+  letter-spacing: -0.5px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #1a1a1a;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+  letter-spacing: -0.1px;
+}
+
+.input {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s;
+  width: 100%;
+  color: #1f2937;
+  min-width: 360px; /* Ensure minimum width for both inputs */
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.passwordInput {
+  padding-right: 48px; /* Space for eye icon */
+  width: 100%;
+  min-width: 360px; /* Match email input width */
+  box-sizing: border-box;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  padding: 4px;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.eyeButton:hover {
+  color: #4b5563;
+}
+
+.eyeIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.1px;
+}
+
+.button:hover {
+  background: #5a67d8;
+  transform: translateY(-1px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.switchText {
+  text-align: center;
+  margin-top: 24px;
+  color: #4b5563;
+  font-size: 15px;
+}
+
+.switchLink {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.switchLink:hover {
+  text-decoration: underline;
+}
+
+.error {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+  background: #fee2e2;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+}
+
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+.forgotPassword {
+  text-align: right;
+  margin-top: -12px;
+}
+
+.textLink {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.textLink:hover {
+  text-decoration: underline;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .authCard {
+    padding: 24px;
+  }
+  
+  .title {
+    font-size: 22px;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+  }
+  
+  .input {
+    font-size: 14px;
+  }
+  
+  .button {
+    padding: 12px;
+  }
+}
