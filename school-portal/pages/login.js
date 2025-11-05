@@ -269,6 +269,12 @@ export default function LoginPage() {
               Sign up
             </Link>
           </p>
+
+
+             <p className={styles.switchText}>
+            Designed & Developed by <span style={{color:'blue' , textDecorationLine:'underline'}}> Ahmad Jillani (Software Developer)
+            </span>
+          </p>
         </div>
       </div>
     </>
