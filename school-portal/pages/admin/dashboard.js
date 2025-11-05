@@ -2,11 +2,25 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import styles from '../../styles/AdminDashboard.module.css';
+import Alert from '../../components/Alert';
+import Modal from '../../components/Modal';
 
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  
+  // Alert states
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState('success');
+  
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+
+  const showTestAlert = (type) => {
+    setAlertType(type);
+    setShowAlert(true);
+  };
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -52,9 +66,9 @@ export default function AdminDashboard() {
             <button className={styles.menuToggle} onClick={toggleSidebar} title={isSidebarOpen ? "Collapse menu" : "Expand menu"}>
               <svg className={styles.toggleIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isSidebarOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l-7 7 7 7M3 12h18" />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l7-7-7-7M21 12H3" />
                 )}
               </svg>
             </button>
@@ -181,33 +195,101 @@ export default function AdminDashboard() {
             <section className={styles.quickActions}>
               <h2 className={styles.sectionTitle}>Quick Actions</h2>
               <div className={styles.actionGrid}>
-                <button className={styles.actionCard}>
+                <button 
+                  className={styles.actionCard}
+                  onClick={() => setShowModal(true)}
+                >
                   <svg className={styles.actionCardIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
                   Add New Student
                 </button>
-                <button className={styles.actionCard}>
+                <button 
+                  className={styles.actionCard}
+                  onClick={() => showTestAlert('success')}
+                >
                   <svg className={styles.actionCardIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
-                  Generate Report
+                  Test Success Alert
                 </button>
-                <button className={styles.actionCard}>
+                <button 
+                  className={styles.actionCard}
+                  onClick={() => showTestAlert('error')}
+                >
                   <svg className={styles.actionCardIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  Schedule Exam
+                  Test Error Alert
                 </button>
-                <button className={styles.actionCard}>
+                <button 
+                  className={styles.actionCard}
+                  onClick={() => showTestAlert('warning')}
+                >
                   <svg className={styles.actionCardIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  Edit Settings
+                  Test Warning Alert
+                </button>
+              </div>
+            </section>
+
+            {/* Test Components Section */}
+            <section className={styles.recentActivity}>
+              <h2 className={styles.sectionTitle}>Test Notifications</h2>
+              <div className={styles.testButtons}>
+                <button 
+                  className={`${styles.modalButton} ${styles.modalButtonPrimary}`}
+                  onClick={() => showTestAlert('info')}
+                  style={{ marginRight: '12px' }}
+                >
+                  Show Info Alert
+                </button>
+                <button 
+                  className={`${styles.modalButton} ${styles.modalButtonSecondary}`}
+                  onClick={() => setShowModal(true)}
+                >
+                  Open Test Modal
                 </button>
               </div>
             </section>
           </div>
+
+          {/* Alert Component */}
+          <Alert
+            type={alertType}
+            title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
+            message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
+            show={showAlert}
+            onClose={() => setShowAlert(false)}
+            autoClose={5000}
+          />
+
+          {/* Modal Component */}
+          <Modal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            title="Test Modal"
+            primaryButton={{
+              text: "Confirm",
+              onClick: () => {
+                showTestAlert('success');
+                console.log("Modal confirmed!");
+              }
+            }}
+            secondaryButton={{
+              text: "Cancel",
+              onClick: () => console.log("Modal cancelled!")
+            }}
+          >
+            <p>This is a test modal to demonstrate the functionality. You can close it by:</p>
+            <ul style={{ marginTop: '12px', marginLeft: '24px' }}>
+              <li>Clicking the X button</li>
+              <li>Clicking outside the modal</li>
+              <li>Pressing the ESC key</li>
+              <li>Using the Cancel or Confirm buttons</li>
+            </ul>
+          </Modal>
         </main>
       </div>
     </>

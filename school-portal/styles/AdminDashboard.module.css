@@ -1,19 +1,17 @@
 .container {
   display: flex;
   min-height: 100vh;
-  height: 100vh;
   background-color: #f3f4f6;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow: hidden;
   position: relative;
 }
 
 /* Sidebar Styles */
 .sidebar {
-  width: 250px;
+  width: 280px;
   background-color: white;
   border-right: 1px solid #e5e7eb;
-  padding: 20px 16px;
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -22,12 +20,13 @@
   top: 0;
   z-index: 50;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
 }
 
 .sidebar.collapsed {
-  width: 70px;
-  padding: 20px 12px;
+  width: 80px;
+  padding: 24px 12px;
 }
 
 .sidebar.collapsed .logo,
@@ -45,16 +44,26 @@
   padding: 12px;
   justify-content: center;
   position: relative;
+  width: 56px;
+  margin: 0 auto;
+}
+
+.sidebar.collapsed .navItem span {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
 .sidebar.collapsed .navItem .navIcon {
   width: 24px;
   height: 24px;
-  transition: transform 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0;
 }
 
 .sidebar.collapsed .navItem:hover .navIcon {
-  transform: scale(1.1);
+  transform: scale(1.15);
+  color: #667eea;
 }
 
 /* Tooltip for collapsed sidebar */
@@ -216,11 +225,11 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
   color: #4b5563;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   background: none;
   cursor: pointer;
@@ -230,6 +239,19 @@
   letter-spacing: -0.1px;
   white-space: nowrap;
   position: relative;
+  overflow: hidden;
+}
+
+.navItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background-color: #667eea;
+  transform: translateX(-4px);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navItem:hover {
@@ -241,6 +263,14 @@
   background-color: #667eea;
   color: white;
   box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.navItem.active::before {
+  transform: translateX(0);
+}
+
+.sidebar.collapsed .navItem.active::before {
+  transform: translateX(-4px);
 }
 
 .navItem.active:hover {
@@ -354,20 +384,19 @@
 /* Main Content Styles */
 .main {
   flex: 1;
-  margin-left: 250px;
-  padding: 24px 40px 24px 80px;
-  max-width: calc(100vw - 250px);
+  margin-left: 280px;
+  padding: 32px 40px;
+  width: calc(100% - 280px);
   min-height: 100vh;
   box-sizing: border-box;
-  overflow-x: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: #f3f4f6;
 }
 
 .main.expanded {
-  margin-left: 70px;
-  padding: 24px 40px;
-  max-width: calc(100vw - 70px);
+  margin-left: 80px;
+  width: calc(100% - 80px);
+  padding: 32px 40px;
 }
 
 .content {
@@ -379,17 +408,16 @@
 .header {
   position: sticky;
   top: 0;
-  background-color: #f3f4f6;
-  margin: -24px -32px 32px -32px;
-  padding: 24px 32px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.95), rgba(248, 249, 255, 0.95));
+  margin: -32px -40px 32px -40px;
+  padding: 32px 40px;
   z-index: 40;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(8px);
-  background-color: rgba(243, 244, 246, 0.95);
+  border-bottom: 1px solid rgba(102, 126, 234, 0.12);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
+  backdrop-filter: blur(12px);
 }
 
 .welcomeText h1 {
@@ -468,28 +496,59 @@
 /* Stats Grid */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
   margin-bottom: 32px;
   width: 100%;
 }
 
 .statCard {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border-radius: 20px;
+  padding: 28px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02),
+              0 8px 16px rgba(102, 126, 234, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
 }
 
 .statCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
-  border-color: #667eea;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(102, 126, 234, 0.18);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.statCard:hover::before {
+  opacity: 1;
+}
+
+.statCard .statInfo {
+  position: relative;
+  z-index: 1;
+}
+
+.statCard:hover .statValue {
+  color: #4c4cff;
+  transform: scale(1.02);
 }
 
 .statInfo h3 {
@@ -525,19 +584,35 @@
 
 /* Recent Activity */
 .recentActivity {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border-radius: 20px;
+  padding: 32px;
   margin-bottom: 32px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02),
+              0 8px 16px rgba(102, 126, 234, 0.06);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  backdrop-filter: blur(8px);
 }
 
 .sectionTitle {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: #1f2937;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   letter-spacing: -0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40%;
+  height: 3px;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  border-radius: 2px;
 }
 
 .activityList {
@@ -597,30 +672,58 @@
 }
 
 .actionCard {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border: 1px solid rgba(102, 126, 234, 0.12);
+  border-radius: 16px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  transition: all 0.2s;
+  gap: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   color: #1f2937;
   font-weight: 500;
+  position: relative;
+  overflow: hidden;
 }
 
 .actionCard:hover {
-  border-color: #667eea;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-color: rgba(102, 126, 234, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(102, 126, 234, 0.18);
+  color: #4c4cff;
+}
+
+.actionCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.actionCard:hover::before {
+  opacity: 1;
 }
 
 .actionCardIcon {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   color: #667eea;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.actionCard:hover .actionCardIcon {
+  transform: scale(1.15);
+  color: #4c4cff;
 }
 
 .content {
@@ -631,6 +734,212 @@
   max-width: 1920px;
   margin: 0 auto;
   padding-bottom: 32px;
+}
+
+/* Alert Styles */
+.alert {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border: 1px solid rgba(102, 126, 234, 0.12);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 320px;
+  max-width: 480px;
+  transform: translateX(150%);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+}
+
+.alert.show {
+  transform: translateX(0);
+}
+
+.alertIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.alertContent {
+  flex: 1;
+}
+
+.alertTitle {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1f2937;
+  margin-bottom: 2px;
+}
+
+.alertMessage {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.alertClose {
+  padding: 4px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.alertClose:hover {
+  color: #4b5563;
+}
+
+.alert.success {
+  border-left: 4px solid #34d399;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.alert.error {
+  border-left: 4px solid #f87171;
+  background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+}
+
+.alert.warning {
+  border-left: 4px solid #fbbf24;
+  background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+}
+
+.alert.info {
+  border-left: 4px solid #60a5fa;
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(17, 24, 39, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(4px);
+}
+
+.modalOverlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  transform: scale(0.95);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(102, 126, 234, 0.12);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.18);
+}
+
+.modalOverlay.show .modal {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.12);
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  letter-spacing: -0.5px;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  padding: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 8px;
+}
+
+.modalClose:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.modalBody {
+  margin-bottom: 24px;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.modalButton {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.modalButtonPrimary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.modalButtonPrimary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+}
+
+.modalButtonSecondary {
+  background: white;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+
+.modalButtonSecondary:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.testButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
 }
 
 /* Responsive Design */
@@ -720,35 +1029,43 @@
 @media (max-width: 480px) {
   .sidebar {
     width: 100%;
-    height: auto;
+    height: 64px;
     position: fixed;
     bottom: 0;
     top: auto;
     border-right: none;
     border-top: 1px solid #e5e7eb;
-    padding: 8px;
+    padding: 0;
     flex-direction: row;
     justify-content: space-around;
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.1);
   }
 
   .main {
-    margin-left: 0;
-    margin-bottom: 60px;
-    max-width: 100vw;
-    padding: 16px;
+    margin-left: 0 !important;
+    margin-bottom: 64px;
+    width: 100% !important;
+    padding: 20px;
   }
 
   .nav {
     flex-direction: row;
     justify-content: space-around;
-    gap: 4px;
-    padding: 0;
+    gap: 8px;
+    padding: 0 16px;
+    height: 100%;
   }
 
   .navItem {
     padding: 8px;
+    border-radius: 8px;
+    height: 42px;
+  }
+
+  .navItem::before {
+    display: none;
   }
 
   .navIcon {
@@ -756,22 +1073,51 @@
     height: 24px;
   }
 
-  .logoWrapper, .logoutButton {
+  .navItem span {
+    display: none;
+  }
+
+  .logoWrapper, .logoutButton, .menuToggle {
     display: none;
   }
 
   .header {
-    padding: 16px;
-    margin: -16px -16px 20px -16px;
+    position: sticky;
+    top: 0;
+    padding: 16px 20px;
+    margin: -20px -20px 20px;
+    background-color: rgba(243, 244, 246, 0.98);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #e5e7eb;
   }
 
   .actionGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
+  .actionCard {
+    padding: 16px;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .actionCardIcon {
+    width: 20px;
+    height: 20px;
+  }
+
   .statsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .statCard {
+    padding: 16px;
+  }
+
+  .statCard h3 {
+    font-size: 20px;
   }
 
   .welcomeText h1 {
@@ -779,12 +1125,21 @@
   }
 
   .activityItem {
-    padding: 10px;
+    padding: 12px;
+    gap: 12px;
   }
 
   .activityIcon {
     width: 36px;
     height: 36px;
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .activityText {
+    font-size: 13px;
+  }
+
+  .activityTime {
+    font-size: 12px;
   }
 }
