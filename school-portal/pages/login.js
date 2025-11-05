@@ -13,19 +13,39 @@ export default function LoginPage() {
     email: '',
     password: ''
   });
-  const [eyePosition, setEyePosition] = useState({ x: 0, focused: false });
+  const [eyePosition, setEyePosition] = useState({ 
+    x: 0, 
+    focused: false, 
+    isPasswordField: false,
+    isTyping: false 
+  });
 
   useEffect(() => {
+    let typingTimeout;
+    
     if (formData.email || formData.password) {
-      // Move pupil randomly left or right when typing
+      // Set different eye states for password and email
       setEyePosition(prev => ({
         x: Math.random() > 0.5 ? 8 : -8,
-        focused: true
+        focused: true,
+        isPasswordField: Boolean(formData.password && formData.password === document.activeElement.value),
+        isTyping: true
       }));
-      const timeout = setTimeout(() => {
+
+      // Reset pupil position after movement
+      const positionTimeout = setTimeout(() => {
         setEyePosition(prev => ({ ...prev, x: 0 }));
       }, 400);
-      return () => clearTimeout(timeout);
+
+      // Keep eyes alert for 2 seconds after typing
+      typingTimeout = setTimeout(() => {
+        setEyePosition(prev => ({ ...prev, isTyping: false }));
+      }, 2000);
+
+      return () => {
+        clearTimeout(positionTimeout);
+        clearTimeout(typingTimeout);
+      };
     }
   }, [formData.email, formData.password]);
 
@@ -55,6 +75,11 @@ export default function LoginPage() {
       ...prev,
       [name]: value
     }));
+    // Update eye state based on which field is being typed in
+    setEyePosition(prev => ({
+      ...prev,
+      isPasswordField: name === 'password'
+    }));
   };
 
   const togglePasswordVisibility = () => {
@@ -77,26 +102,90 @@ export default function LoginPage() {
             School Portal
           </div>
           
-          <div className={styles.watchingEye}>
-            <svg 
-              width="100" 
-              height="50" 
-              viewBox="0 0 100 50" 
-              className={`${styles.eye} ${eyePosition.focused ? styles.focused : ''}`}
-              style={{ 
-                '--eye-x': `${eyePosition.x}px`,
-              }}
-            >
-              <ellipse cx="50" cy="25" rx="20" ry="25" fill="white" stroke="#1a1a1a" strokeWidth="3"/>
-              <circle 
-                cx="50" 
-                cy="25" 
-                r="10" 
-                fill="#1a1a1a" 
-                className={styles.pupil}
-              />
-              <path d="M 25 25 Q 50 50 75 25" stroke="#1a1a1a" strokeWidth="3" fill="transparent"/>
-            </svg>
+          <div className={styles.watchingEyes}>
+            {/* Left Eye */}
+            <div className={styles.eyeContainer}>
+              <svg 
+                width="100" 
+                height="70" 
+                viewBox="0 0 100 70" 
+                className={`${styles.eye} ${eyePosition.focused ? styles.focused : ''} ${eyePosition.isPasswordField ? styles.passwordTyping : ''}`}
+                style={{ 
+                  '--eye-x': `${eyePosition.x}px`,
+                }}
+              >
+                {/* Left Eyebrow */}
+                <path 
+                  d="M25 18 C35 18 40 12 50 12 C60 12 65 16 75 18" 
+                  stroke="#1a1a1a" 
+                  strokeWidth="4" 
+                  strokeLinecap="round"
+                  fill="none"
+                  className={styles.eyebrow}
+                />
+                {/* Eye - Open State */}
+                <g className={styles.openEye}>
+                  <ellipse cx="50" cy="35" rx="20" ry="20" fill="white" stroke="#1a1a1a" strokeWidth="3"/>
+                  <circle 
+                    cx="50" 
+                    cy="35" 
+                    r="8" 
+                    fill="#1a1a1a" 
+                    className={styles.pupil}
+                  />
+                </g>
+                {/* Eye - Closed State */}
+                <path 
+                  d="M30 35 Q50 45 70 35" 
+                  stroke="#1a1a1a" 
+                  strokeWidth="3" 
+                  fill="none"
+                  className={styles.closedEye}
+                />
+              </svg>
+            </div>
+
+            {/* Right Eye */}
+            <div className={styles.eyeContainer}>
+              <svg 
+                width="100" 
+                height="70" 
+                viewBox="0 0 100 70" 
+                className={`${styles.eye} ${eyePosition.focused ? styles.focused : ''} ${eyePosition.isPasswordField ? styles.passwordTyping : ''}`}
+                style={{ 
+                  '--eye-x': `${eyePosition.x}px`,
+                }}
+              >
+                {/* Right Eyebrow */}
+                <path 
+                  d="M25 18 C35 18 40 12 50 12 C60 12 65 16 75 18" 
+                  stroke="#1a1a1a" 
+                  strokeWidth="4" 
+                  strokeLinecap="round"
+                  fill="none"
+                  className={styles.eyebrow}
+                />
+                {/* Eye - Open State */}
+                <g className={styles.openEye}>
+                  <ellipse cx="50" cy="35" rx="20" ry="20" fill="white" stroke="#1a1a1a" strokeWidth="3"/>
+                  <circle 
+                    cx="50" 
+                    cy="35" 
+                    r="8" 
+                    fill="#1a1a1a" 
+                    className={styles.pupil}
+                  />
+                </g>
+                {/* Eye - Closed State */}
+                <path 
+                  d="M30 35 Q50 45 70 35" 
+                  stroke="#1a1a1a" 
+                  strokeWidth="3" 
+                  fill="none"
+                  className={styles.closedEye}
+                />
+              </svg>
+            </div>
           </div>
 
           <h1 className={styles.title}>Welcome Back</h1>
