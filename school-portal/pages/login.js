@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styles from '../styles/Auth.module.css';
@@ -13,6 +13,21 @@ export default function LoginPage() {
     email: '',
     password: ''
   });
+  const [eyePosition, setEyePosition] = useState({ x: 0, focused: false });
+
+  useEffect(() => {
+    if (formData.email || formData.password) {
+      // Move pupil randomly left or right when typing
+      setEyePosition(prev => ({
+        x: Math.random() > 0.5 ? 8 : -8,
+        focused: true
+      }));
+      const timeout = setTimeout(() => {
+        setEyePosition(prev => ({ ...prev, x: 0 }));
+      }, 400);
+      return () => clearTimeout(timeout);
+    }
+  }, [formData.email, formData.password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,6 +77,28 @@ export default function LoginPage() {
             School Portal
           </div>
           
+          <div className={styles.watchingEye}>
+            <svg 
+              width="100" 
+              height="50" 
+              viewBox="0 0 100 50" 
+              className={`${styles.eye} ${eyePosition.focused ? styles.focused : ''}`}
+              style={{ 
+                '--eye-x': `${eyePosition.x}px`,
+              }}
+            >
+              <ellipse cx="50" cy="25" rx="20" ry="25" fill="white" stroke="#1a1a1a" strokeWidth="3"/>
+              <circle 
+                cx="50" 
+                cy="25" 
+                r="10" 
+                fill="#1a1a1a" 
+                className={styles.pupil}
+              />
+              <path d="M 25 25 Q 50 50 75 25" stroke="#1a1a1a" strokeWidth="3" fill="transparent"/>
+            </svg>
+          </div>
+
           <h1 className={styles.title}>Welcome Back</h1>
           <p className={styles.subtitle}>
             Sign in to continue to your dashboard
