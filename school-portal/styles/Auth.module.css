@@ -389,6 +389,24 @@
   border: 1px solid #fecaca;
 }
 
+.success {
+  color: #047857;
+  font-size: 14px;
+  font-weight: 500;
+  background: #ecfdf5;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #a7f3d0;
+  text-align: center;
+  margin: 20px 0;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .loading {
   display: inline-block;
   width: 20px;
