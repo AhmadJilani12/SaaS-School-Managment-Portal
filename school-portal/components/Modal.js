@@ -1,5 +1,4 @@
 import { useEffect, useCallback } from 'react';
-import styles from '../styles/AdminDashboard.module.css';
 
 const Modal = ({
   show,
@@ -37,25 +36,44 @@ const Modal = ({
   };
 
   return (
-    <div className={`${styles.modalOverlay} ${show ? styles.show : ''}`} onClick={handleOverlayClick}>
-      <div className={styles.modal}>
-        <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle}>{title}</h2>
-          <button className={styles.modalClose} onClick={onClose} aria-label="Close">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 transition-opacity ${
+        show ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
+      onClick={handleOverlayClick}
+    >
+      <div className="relative w-full max-w-lg bg-white rounded-lg shadow-xl mx-4">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+          <button
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <svg
+              className="w-5 h-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
         
-        <div className={styles.modalBody}>
+        <div className="p-6">
           {children}
         </div>
 
         {showFooter && (
-          <div className={styles.modalFooter}>
+          <div className="flex items-center justify-end gap-3 p-4 border-t">
             <button 
-              className={`${styles.modalButton} ${styles.modalButtonSecondary}`}
+              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 secondaryButton.onClick();
@@ -65,7 +83,7 @@ const Modal = ({
               {secondaryButton.text}
             </button>
             <button 
-              className={`${styles.modalButton} ${styles.modalButtonPrimary}`}
+              className="px-4 py-2 text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 primaryButton.onClick();

@@ -1,9 +1,10 @@
+'use client';
+
 import { useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import styles from '../../styles/AdminDashboard.module.css';
-import Alert from '../../components/Alert';
-import Modal from '../../components/Modal';
+import { useRouter } from 'next/navigation';
+import styles from '../../../styles/AdminDashboard.module.css';
+import Alert from '../../../components/Alert';
+import Modal from '../../../components/Modal';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -48,13 +49,6 @@ export default function AdminDashboard() {
 
   return (
     <>
-      <Head>
-        <title>SuperAdmin Dashboard - School Portal</title>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </Head>
       <div className={styles.container}>
         {/* Sidebar */}
         <aside className={`${styles.sidebar} ${!isSidebarOpen ? styles.collapsed : ''}`}>

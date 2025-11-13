@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import styles from '../styles/AdminDashboard.module.css';
 
 const Alert = ({ type = 'info', title, message, show, onClose, autoClose = 5000 }) => {
   useEffect(() => {
@@ -13,9 +12,16 @@ const Alert = ({ type = 'info', title, message, show, onClose, autoClose = 5000 
 
   if (!show) return null;
 
+  const typeClasses = {
+    success: 'bg-green-50 text-green-800 border-green-200',
+    error: 'bg-red-50 text-red-800 border-red-200',
+    warning: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+    info: 'bg-blue-50 text-blue-800 border-blue-200'
+  };
+
   const icons = {
     success: (
-      <svg className={styles.alertIcon} viewBox="0 0 24 24" fill="none" stroke="#34d399">
+      <svg className="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -25,7 +31,7 @@ const Alert = ({ type = 'info', title, message, show, onClose, autoClose = 5000 
       </svg>
     ),
     error: (
-      <svg className={styles.alertIcon} viewBox="0 0 24 24" fill="none" stroke="#f87171">
+      <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -35,7 +41,7 @@ const Alert = ({ type = 'info', title, message, show, onClose, autoClose = 5000 
       </svg>
     ),
     warning: (
-      <svg className={styles.alertIcon} viewBox="0 0 24 24" fill="none" stroke="#fbbf24">
+      <svg className="w-5 h-5 text-yellow-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -45,7 +51,7 @@ const Alert = ({ type = 'info', title, message, show, onClose, autoClose = 5000 
       </svg>
     ),
     info: (
-      <svg className={styles.alertIcon} viewBox="0 0 24 24" fill="none" stroke="#60a5fa">
+      <svg className="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -57,15 +63,31 @@ const Alert = ({ type = 'info', title, message, show, onClose, autoClose = 5000 
   };
 
   return (
-    <div className={`${styles.alert} ${styles[type]} ${styles.show}`}>
-      {icons[type]}
-      <div className={styles.alertContent}>
-        <div className={styles.alertTitle}>{title}</div>
-        {message && <div className={styles.alertMessage}>{message}</div>}
+    <div className={`fixed bottom-4 right-4 z-50 flex items-start w-full max-w-sm overflow-hidden rounded-lg border shadow-lg animate-slide-up ${typeClasses[type]}`}>
+      <div className="flex items-center p-4">
+        {icons[type]}
+        <div className="ml-3">
+          <div className="font-semibold">{title}</div>
+          {message && <div className="mt-1 text-sm opacity-90">{message}</div>}
+        </div>
       </div>
-      <button className={styles.alertClose} onClick={onClose} aria-label="Close">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+      <button
+        className="p-2 hover:opacity-75 transition-opacity"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        <svg
+          className="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
     </div>

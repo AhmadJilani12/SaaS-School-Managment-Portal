@@ -1,7 +1,9 @@
+import LoginPage from "./(auth)/login/page";
+
 export default function Home() {
   return (
     <main>
-      {/* Your home page content */}
+      <LoginPage></LoginPage>
     </main>
   );
 }
