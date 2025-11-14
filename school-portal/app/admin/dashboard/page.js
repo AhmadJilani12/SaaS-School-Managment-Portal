@@ -13,10 +13,68 @@ export default function AdminDashboard() {
   const [alertType, setAlertType] = useState('success');
   const [showModal, setShowModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [showTeacherModal, setShowTeacherModal] = useState(false);
   const [roleFormData, setRoleFormData] = useState({
     roleName: '',
     roleDescription: '',
     permissions: []
+  });
+  const [teacherFormData, setTeacherFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    qualification: '',
+    experience: '',
+    department: ''
+  });
+
+  // Dummy Teachers Data
+  const [teachers, setTeachers] = useState([
+    { id: 1, name: 'Ahmed Khan', email: 'ahmed@school.com', subject: 'Mathematics', phone: '03001234567', qualification: 'M.Sc', experience: '5 years', department: 'Science', status: 'Active' },
+    { id: 2, name: 'Fatima Ali', email: 'fatima@school.com', subject: 'English', phone: '03009876543', qualification: 'M.A', experience: '3 years', department: 'Languages', status: 'Active' },
+    { id: 3, name: 'Muhammad Hassan', email: 'hassan@school.com', subject: 'Physics', phone: '03005555555', qualification: 'M.Sc', experience: '7 years', department: 'Science', status: 'Active' },
+    { id: 4, name: 'Aisha Malik', email: 'aisha@school.com', subject: 'Chemistry', phone: '03003333333', qualification: 'M.Sc', experience: '4 years', department: 'Science', status: 'Inactive' },
+  ]);
+
+  // Dummy Classes Data
+  const [classes, setClasses] = useState([
+    { id: 1, name: 'Class 1', sections: ['A', 'B'], totalStudents: 85, classTeacher: 'Ahmed Khan', status: 'Active' },
+    { id: 2, name: 'Class 2', sections: ['A', 'B', 'C'], totalStudents: 125, classTeacher: 'Fatima Ali', status: 'Active' },
+    { id: 3, name: 'Class 5', sections: ['A', 'B'], totalStudents: 90, classTeacher: 'Muhammad Hassan', status: 'Active' },
+    { id: 4, name: 'Class 10', sections: ['A', 'B', 'C'], totalStudents: 140, classTeacher: 'Aisha Malik', status: 'Active' },
+  ]);
+
+  // Form states for classes
+  const [showClassModal, setShowClassModal] = useState(false);
+  const [classFormData, setClassFormData] = useState({
+    className: '',
+    sections: '',
+    classTeacher: ''
+  });
+
+  // Section view state
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [showRemarkModal, setShowRemarkModal] = useState(false);
+  const [showTestReportModal, setShowTestReportModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [studentRemark, setStudentRemark] = useState('');
+
+  // Dummy Students Data with Marks and Remarks
+  const [sectionStudents, setSectionStudents] = useState({
+    '1-A': [
+      { id: 1, name: 'Ali Ahmed', rollNo: 1, midExam: 78, finalExam: 85, total: 163, percentage: '81.5%', status: 'Pass', grade: 'A', remark: 'Good performance', classTests: [{ date: '2025-11-05', marks: 18, total: 20, pdf: 'test1.pdf' }, { date: '2025-11-10', marks: 17, total: 20, pdf: 'test2.pdf' }], homeWork: 'Regular submission' },
+      { id: 2, name: 'Sara Khan', rollNo: 2, midExam: 92, finalExam: 88, total: 180, percentage: '90%', status: 'Pass', grade: 'A+', remark: 'Excellent student', classTests: [{ date: '2025-11-05', marks: 19, total: 20, pdf: 'test1.pdf' }, { date: '2025-11-10', marks: 18, total: 20, pdf: 'test2.pdf' }], homeWork: 'Consistently excellent' },
+      { id: 3, name: 'Hassan Ali', rollNo: 3, midExam: 65, finalExam: 72, total: 137, percentage: '68.5%', status: 'Pass', grade: 'B', remark: 'Needs improvement in concepts', classTests: [{ date: '2025-11-05', marks: 14, total: 20, pdf: 'test1.pdf' }, { date: '2025-11-10', marks: 15, total: 20, pdf: 'test2.pdf' }], homeWork: 'Sometimes incomplete' },
+      { id: 4, name: 'Zara Malik', rollNo: 4, midExam: 88, finalExam: 90, total: 178, percentage: '89%', status: 'Pass', grade: 'A+', remark: 'Brilliant student, keep it up', classTests: [{ date: '2025-11-05', marks: 19, total: 20, pdf: 'test1.pdf' }, { date: '2025-11-10', marks: 19, total: 20, pdf: 'test2.pdf' }], homeWork: 'Always on time' },
+      { id: 5, name: 'Usman Farooq', rollNo: 5, midExam: 45, finalExam: 52, total: 97, percentage: '48.5%', status: 'Fail', grade: 'F', remark: 'Requires special attention and coaching', classTests: [{ date: '2025-11-05', marks: 10, total: 20, pdf: 'test1.pdf' }, { date: '2025-11-10', marks: 11, total: 20, pdf: 'test2.pdf' }], homeWork: 'Not submitted regularly' },
+    ],
+    '1-B': [
+      { id: 6, name: 'Iqra Hussain', rollNo: 1, midExam: 80, finalExam: 86, total: 166, percentage: '83%', status: 'Pass', grade: 'A', remark: 'Very good progress', classTests: [{ date: '2025-11-05', marks: 18, total: 20, pdf: 'test1.pdf' }], homeWork: 'Mostly complete' },
+      { id: 7, name: 'Bilal Khan', rollNo: 2, midExam: 75, finalExam: 79, total: 154, percentage: '77%', status: 'Pass', grade: 'B+', remark: 'Good effort shown', classTests: [{ date: '2025-11-05', marks: 16, total: 20, pdf: 'test1.pdf' }], homeWork: 'Satisfactory' },
+      { id: 8, name: 'Hira Ahmed', rollNo: 3, midExam: 91, finalExam: 89, total: 180, percentage: '90%', status: 'Pass', grade: 'A+', remark: 'Outstanding performance', classTests: [{ date: '2025-11-05', marks: 19, total: 20, pdf: 'test1.pdf' }], homeWork: 'Exceptional' },
+    ]
   });
 
   // Navigation menu items
@@ -24,6 +82,7 @@ export default function AdminDashboard() {
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'users', label: 'User Management', icon: '👥' },
     { id: 'roles', label: 'Roles & Permissions', icon: '🔐' },
+    { id: 'classes', label: 'Classes & Sections', icon: '🏫' },
     { id: 'students', label: 'Students', icon: '👨‍🎓' },
     { id: 'teachers', label: 'Teachers', icon: '👩‍🏫' },
     { id: 'courses', label: 'Courses', icon: '📚' },
@@ -58,6 +117,33 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     router.push('/login');
+  };
+
+  const handleAddTeacher = () => {
+    if (teacherFormData.name && teacherFormData.email) {
+      const newTeacher = {
+        id: teachers.length + 1,
+        ...teacherFormData,
+        status: 'Active'
+      };
+      setTeachers([...teachers, newTeacher]);
+      setTeacherFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        qualification: '',
+        experience: '',
+        department: ''
+      });
+      setShowTeacherModal(false);
+      showTestAlert('success');
+    }
+  };
+
+  const handleDeleteTeacher = (id) => {
+    setTeachers(teachers.filter(t => t.id !== id));
+    showTestAlert('success');
   };
 
   return (
@@ -346,13 +432,365 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {['students', 'teachers', 'courses', 'reports', 'settings'].includes(activeTab) && (
+            {activeTab === 'teachers' && (
+              <div className="p-6">
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-lg font-bold text-gray-900">Teachers Management</h2>
+                      <p className="text-sm text-gray-600 mt-1">Manage all teachers and their assignments</p>
+                    </div>
+                    <button
+                      onClick={() => setShowTeacherModal(true)}
+                      className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold flex items-center space-x-2"
+                    >
+                      <span>➕</span>
+                      <span>Add New Teacher</span>
+                    </button>
+                  </div>
+
+                  {/* Teachers Table */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b-2 border-gray-200">
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Name</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Subject</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Department</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Experience</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {teachers.map((teacher) => (
+                          <tr key={teacher.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                            <td className="py-3 px-4">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                  {teacher.name.charAt(0)}
+                                </div>
+                                <span className="font-semibold text-gray-900">{teacher.name}</span>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4 text-gray-600">{teacher.email}</td>
+                            <td className="py-3 px-4">
+                              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                                {teacher.subject}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-gray-600">{teacher.department}</td>
+                            <td className="py-3 px-4 text-gray-600">{teacher.experience}</td>
+                            <td className="py-3 px-4">
+                              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                teacher.status === 'Active' 
+                                  ? 'bg-green-100 text-green-700' 
+                                  : 'bg-gray-100 text-gray-700'
+                              }`}>
+                                {teacher.status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex items-center space-x-2">
+                                <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors" title="Edit">
+                                  ✏️
+                                </button>
+                                <button 
+                                  onClick={() => handleDeleteTeacher(teacher.id)}
+                                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors" title="Delete"
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Empty State */}
+                  {teachers.length === 0 && (
+                    <div className="text-center py-12">
+                      <p className="text-gray-500 mb-4">No teachers found. Add your first teacher to get started.</p>
+                    </div>
+                  )}
+
+                  {/* Stats */}
+                  <div className="mt-6 pt-6 border-t border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Total Teachers</p>
+                      <p className="text-2xl font-bold text-blue-600 mt-2">{teachers.length}</p>
+                    </div>
+                    <div className="p-4 bg-green-50 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Active Teachers</p>
+                      <p className="text-2xl font-bold text-green-600 mt-2">{teachers.filter(t => t.status === 'Active').length}</p>
+                    </div>
+                    <div className="p-4 bg-purple-50 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Departments</p>
+                      <p className="text-2xl font-bold text-purple-600 mt-2">{new Set(teachers.map(t => t.department)).size}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {['students', 'courses', 'reports', 'settings'].includes(activeTab) && (
               <div className="p-6">
                 <div className="bg-white rounded-lg shadow-sm p-6">
                   <h2 className="text-lg font-bold text-gray-900 mb-4">
                     {menuItems.find(m => m.id === activeTab)?.label || 'Section'}
                   </h2>
                   <p className="text-gray-600">This section is under development...</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'classes' && !selectedClass && (
+              <div className="p-6">
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-lg font-bold text-gray-900">Classes & Sections</h2>
+                      <p className="text-sm text-gray-600 mt-1">Manage all school classes and their sections</p>
+                    </div>
+                    <button
+                      onClick={() => setShowClassModal(true)}
+                      className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold flex items-center space-x-2"
+                    >
+                      <span>➕</span>
+                      <span>Add New Class</span>
+                    </button>
+                  </div>
+
+                  {/* Classes Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {classes.map((classItem) => (
+                      <div key={classItem.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <h3 className="text-lg font-bold text-gray-900">{classItem.name}</h3>
+                            <p className="text-sm text-gray-600 mt-1">Class Teacher: <span className="font-semibold">{classItem.classTeacher}</span></p>
+                          </div>
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${classItem.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                            {classItem.status}
+                          </span>
+                        </div>
+
+                        <div className="space-y-3">
+                          {/* Sections */}
+                          <div>
+                            <p className="text-xs text-gray-600 font-medium uppercase">Sections</p>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {classItem.sections.map((section, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => {
+                                    setSelectedClass(classItem);
+                                    setSelectedSection(section);
+                                  }}
+                                  className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition-colors cursor-pointer"
+                                >
+                                  {classItem.name}-{section}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Students Count */}
+                          <div className="pt-3 border-t border-gray-200">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-xs text-gray-600">Total Students</p>
+                                <p className="text-2xl font-bold text-gray-900">{classItem.totalStudents}</p>
+                              </div>
+                              <div className="text-3xl">👥</div>
+                            </div>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="pt-3 flex items-center space-x-2">
+                            <button className="flex-1 p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200 font-semibold text-sm">
+                              ✏️ Edit
+                            </button>
+                            <button className="flex-1 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-200 font-semibold text-sm">
+                              🗑️ Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Empty State */}
+                  {classes.length === 0 && (
+                    <div className="text-center py-12">
+                      <p className="text-gray-500 mb-4">No classes found. Create your first class to get started.</p>
+                    </div>
+                  )}
+
+                  {/* Stats */}
+                  <div className="mt-6 pt-6 border-t border-gray-200 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Total Classes</p>
+                      <p className="text-2xl font-bold text-blue-600 mt-2">{classes.length}</p>
+                    </div>
+                    <div className="p-4 bg-green-50 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Total Sections</p>
+                      <p className="text-2xl font-bold text-green-600 mt-2">{classes.reduce((sum, c) => sum + c.sections.length, 0)}</p>
+                    </div>
+                    <div className="p-4 bg-purple-50 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Total Students</p>
+                      <p className="text-2xl font-bold text-purple-600 mt-2">{classes.reduce((sum, c) => sum + c.totalStudents, 0)}</p>
+                    </div>
+                    <div className="p-4 bg-orange-50 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Avg. Students/Class</p>
+                      <p className="text-2xl font-bold text-orange-600 mt-2">{Math.round(classes.reduce((sum, c) => sum + c.totalStudents, 0) / (classes.length || 1))}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Section Detail View with Student Marks */}
+            {activeTab === 'classes' && selectedClass && selectedSection && (
+              <div className="p-6">
+                {/* Back Button & Header */}
+                <div className="mb-6 flex items-center space-x-4">
+                  <button
+                    onClick={() => {
+                      setSelectedClass(null);
+                      setSelectedSection(null);
+                    }}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold flex items-center space-x-2"
+                  >
+                    <span>←</span>
+                    <span>Back to Classes</span>
+                  </button>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">{selectedClass.name}-{selectedSection}</h2>
+                    <p className="text-sm text-gray-600">Class Teacher: {selectedClass.classTeacher}</p>
+                  </div>
+                </div>
+
+                {/* Students & Marks Table */}
+                <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Roll No</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Student Name</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Mid Exam</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Final Exam</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Total</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Percentage</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Grade</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Status</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Remarks</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Class Tests</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {sectionStudents[`${selectedClass.id}-${selectedSection}`]?.map((student, idx) => (
+                          <tr key={student.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-indigo-50 transition-colors`}>
+                            <td className="px-6 py-4 text-sm font-semibold text-gray-900">{student.rollNo}</td>
+                            <td className="px-6 py-4 text-sm text-gray-900 font-medium">{student.name}</td>
+                            <td className="px-6 py-4 text-center">
+                              <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">{student.midExam}</span>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">{student.finalExam}</span>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">{student.total}</span>
+                            </td>
+                            <td className="px-6 py-4 text-center text-sm font-semibold text-gray-900">{student.percentage}</td>
+                            <td className="px-6 py-4 text-center">
+                              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                student.grade === 'A+' ? 'bg-green-100 text-green-800' :
+                                student.grade === 'A' ? 'bg-green-100 text-green-800' :
+                                student.grade === 'B+' ? 'bg-yellow-100 text-yellow-800' :
+                                student.grade === 'B' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {student.grade}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                student.status === 'Pass' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              }`}>
+                                {student.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <button
+                                onClick={() => {
+                                  setSelectedStudent(student);
+                                  setStudentRemark(student.remark || '');
+                                  setShowRemarkModal(true);
+                                }}
+                                className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-200 transition-colors"
+                                title="Add/Edit Remark"
+                              >
+                                📝 View
+                              </button>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <button
+                                onClick={() => {
+                                  setSelectedStudent(student);
+                                  setShowTestReportModal(true);
+                                }}
+                                className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm font-semibold hover:bg-purple-200 transition-colors"
+                                title="View Class Tests"
+                              >
+                                📄 Tests
+                              </button>
+                            </td>
+                            <td className="px-6 py-4 text-center flex items-center justify-center space-x-2">
+                              <button className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition-colors" title="Edit">
+                                ✏️
+                              </button>
+                              <button className="px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors" title="Delete">
+                                🗑️
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Summary Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-gray-50 border-t border-gray-200">
+                    <div className="p-4 bg-white rounded-lg border border-gray-200">
+                      <p className="text-xs text-gray-600 font-medium uppercase">Total Students</p>
+                      <p className="text-2xl font-bold text-gray-900 mt-2">{sectionStudents[`${selectedClass.id}-${selectedSection}`]?.length || 0}</p>
+                    </div>
+                    <div className="p-4 bg-white rounded-lg border border-gray-200">
+                      <p className="text-xs text-gray-600 font-medium uppercase">Passed</p>
+                      <p className="text-2xl font-bold text-green-600 mt-2">{sectionStudents[`${selectedClass.id}-${selectedSection}`]?.filter(s => s.status === 'Pass').length || 0}</p>
+                    </div>
+                    <div className="p-4 bg-white rounded-lg border border-gray-200">
+                      <p className="text-xs text-gray-600 font-medium uppercase">Failed</p>
+                      <p className="text-2xl font-bold text-red-600 mt-2">{sectionStudents[`${selectedClass.id}-${selectedSection}`]?.filter(s => s.status === 'Fail').length || 0}</p>
+                    </div>
+                    <div className="p-4 bg-white rounded-lg border border-gray-200">
+                      <p className="text-xs text-gray-600 font-medium uppercase">Avg Percentage</p>
+                      <p className="text-2xl font-bold text-indigo-600 mt-2">
+                        {(
+                          sectionStudents[`${selectedClass.id}-${selectedSection}`]?.reduce((sum, s) => sum + parseFloat(s.percentage), 0) / 
+                          (sectionStudents[`${selectedClass.id}-${selectedSection}`]?.length || 1)
+                        ).toFixed(1)}%
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -511,6 +949,246 @@ export default function AdminDashboard() {
                 className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
               >
                 Create Role
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Teacher Creation Modal */}
+      {showTeacherModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Add New Teacher</h2>
+              <button
+                onClick={() => setShowTeacherModal(false)}
+                className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              {/* Personal Information */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Personal Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Full Name *</label>
+                    <input
+                      type="text"
+                      value={teacherFormData.name}
+                      onChange={(e) => setTeacherFormData({ ...teacherFormData, name: e.target.value })}
+                      placeholder="Enter teacher name"
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/10"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Email *</label>
+                    <input
+                      type="email"
+                      value={teacherFormData.email}
+                      onChange={(e) => setTeacherFormData({ ...teacherFormData, email: e.target.value })}
+                      placeholder="Enter email"
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/10"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={teacherFormData.phone}
+                      onChange={(e) => setTeacherFormData({ ...teacherFormData, phone: e.target.value })}
+                      placeholder="Enter phone number"
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/10"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Qualification</label>
+                    <select
+                      value={teacherFormData.qualification}
+                      onChange={(e) => setTeacherFormData({ ...teacherFormData, qualification: e.target.value })}
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/10"
+                    >
+                      <option>Select qualification</option>
+                      <option>B.Sc</option>
+                      <option>M.Sc</option>
+                      <option>B.A</option>
+                      <option>M.A</option>
+                      <option>B.Ed</option>
+                      <option>M.Ed</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Professional Information */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Professional Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Subject/Specialization</label>
+                    <input
+                      type="text"
+                      value={teacherFormData.subject}
+                      onChange={(e) => setTeacherFormData({ ...teacherFormData, subject: e.target.value })}
+                      placeholder="e.g., Mathematics, English"
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/10"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Department</label>
+                    <select
+                      value={teacherFormData.department}
+                      onChange={(e) => setTeacherFormData({ ...teacherFormData, department: e.target.value })}
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/10"
+                    >
+                      <option>Select department</option>
+                      <option>Science</option>
+                      <option>Languages</option>
+                      <option>Mathematics</option>
+                      <option>Social Studies</option>
+                      <option>Arts</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Years of Experience</label>
+                    <input
+                      type="text"
+                      value={teacherFormData.experience}
+                      onChange={(e) => setTeacherFormData({ ...teacherFormData, experience: e.target.value })}
+                      placeholder="e.g., 5 years"
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/10"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <p className="text-sm text-green-700">
+                  <strong>Note:</strong> All marked with (*) are required fields. You can edit teacher details later if needed.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
+              <button
+                onClick={() => setShowTeacherModal(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddTeacher}
+                className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!teacherFormData.name || !teacherFormData.email}
+              >
+                Add Teacher
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Class Modal */}
+      {showClassModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4 flex items-center justify-between text-white border-b">
+              <h2 className="text-lg font-bold">Create New Class</h2>
+              <button
+                onClick={() => setShowClassModal(false)}
+                className="text-white hover:bg-white/20 p-1 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {/* Basic Information */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Basic Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Class Name *</label>
+                    <select
+                      value={classFormData.className}
+                      onChange={(e) => setClassFormData({ ...classFormData, className: e.target.value })}
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                    >
+                      <option value="">Select Class</option>
+                      {[...Array(12)].map((_, i) => (
+                        <option key={i + 1} value={`Class ${i + 1}`}>Class {i + 1}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Sections *</label>
+                    <input
+                      type="text"
+                      value={classFormData.sections}
+                      onChange={(e) => setClassFormData({ ...classFormData, sections: e.target.value })}
+                      placeholder="e.g., A, B, C (comma separated)"
+                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Class Teacher Assignment */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Class Teacher Assignment</h3>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Select Class Teacher *</label>
+                  <select
+                    value={classFormData.classTeacher}
+                    onChange={(e) => setClassFormData({ ...classFormData, classTeacher: e.target.value })}
+                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                  >
+                    <option value="">Select a teacher</option>
+                    {teachers.map((teacher) => (
+                      <option key={teacher.id} value={teacher.name}>
+                        {teacher.name} - {teacher.subject}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-2">The selected teacher will be responsible for this entire class.</p>
+                </div>
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                <p className="text-sm text-indigo-700">
+                  <strong>Note:</strong> All marked with (*) are required fields. You can edit class details later if needed.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
+              <button
+                onClick={() => setShowClassModal(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  showTestAlert('success');
+                  setShowClassModal(false);
+                  setClassFormData({ className: '', sections: '', classTeacher: '' });
+                }}
+                className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!classFormData.className || !classFormData.sections || !classFormData.classTeacher}
+              >
+                Create Class
               </button>
             </div>
           </div>
