@@ -9,13 +9,37 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  
-  // Alert states
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('success');
-  
-  // Modal state
   const [showModal, setShowModal] = useState(false);
+
+  // Navigation menu items
+  const menuItems = [
+    { id: 'overview', label: 'Overview', icon: '📊' },
+    { id: 'users', label: 'User Management', icon: '👥' },
+    { id: 'roles', label: 'Roles & Permissions', icon: '🔐' },
+    { id: 'students', label: 'Students', icon: '👨‍🎓' },
+    { id: 'teachers', label: 'Teachers', icon: '👩‍🏫' },
+    { id: 'courses', label: 'Courses', icon: '📚' },
+    { id: 'reports', label: 'Reports', icon: '📈' },
+    { id: 'settings', label: 'Settings', icon: '⚙️' },
+  ];
+
+  // Stats
+  const stats = [
+    { label: 'Total Students', value: '2,845', trend: '+12%', isPositive: true, icon: '👨‍🎓', color: 'from-blue-500 to-blue-600' },
+    { label: 'Active Teachers', value: '147', trend: '+5%', isPositive: true, icon: '👩‍🏫', color: 'from-green-500 to-green-600' },
+    { label: 'Course Success', value: '94%', trend: '+2%', isPositive: true, icon: '📈', color: 'from-purple-500 to-purple-600' },
+    { label: 'Revenue', value: '$128.5k', trend: '+18%', isPositive: true, icon: '💰', color: 'from-orange-500 to-orange-600' },
+  ];
+
+  // Recent activities
+  const recentActivities = [
+    { id: 1, user: 'Sarah Wilson', action: 'Added new course', time: '2 minutes ago', icon: '📚', type: 'course' },
+    { id: 2, user: 'John Smith', action: 'Updated student records', time: '15 minutes ago', icon: '📝', type: 'student' },
+    { id: 3, user: 'Emma Davis', action: 'Scheduled exam', time: '1 hour ago', icon: '📅', type: 'exam' },
+    { id: 4, user: 'Michael Brown', action: 'Generated reports', time: '2 hours ago', icon: '📊', type: 'report' },
+  ];
 
   const showTestAlert = (type) => {
     setAlertType(type);
@@ -26,299 +50,299 @@ export default function AdminDashboard() {
     setSidebarOpen(!isSidebarOpen);
   };
 
-  // Dummy stats data
-  const stats = [
-    { label: 'Total Students', value: '2,845', trend: '+12%', isPositive: true },
-    { label: 'Active Teachers', value: '147', trend: '+5%', isPositive: true },
-    { label: 'Course Success', value: '94%', trend: '+2%', isPositive: true },
-    { label: 'Revenue', value: '$128.5k', trend: '+18%', isPositive: true },
-  ];
-
-  // Dummy recent activities
-  const recentActivities = [
-    { id: 1, user: 'Sarah Wilson', action: 'Added new course', time: '2 minutes ago', icon: '📚' },
-    { id: 2, user: 'John Smith', action: 'Updated student records', time: '15 minutes ago', icon: '📝' },
-    { id: 3, user: 'Emma Davis', action: 'Scheduled exam', time: '1 hour ago', icon: '📅' },
-    { id: 4, user: 'Michael Brown', action: 'Generated reports', time: '2 hours ago', icon: '📊' },
-  ];
-
   const handleLogout = () => {
     router.push('/login');
   };
 
   return (
     <>
-      <div className="flex h-screen bg-gray-100">
-        {/* Sidebar */}
-        <aside className={`bg-white w-64 min-h-screen shadow-lg transition-all duration-300 ${!isSidebarOpen ? '-ml-64' : ''}`}>
-          <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex flex-col">
-              <div className="text-xl font-bold text-gray-800">School Portal</div>
-              {isSidebarOpen && <div className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full mt-1">SuperAdmin</div>}
-            </div>
-            <button
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              onClick={toggleSidebar}
-              title={isSidebarOpen ? "Collapse menu" : "Expand menu"}
-            >
-              <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isSidebarOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l-7 7 7 7M3 12h18" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l7-7-7-7M21 12H3" />
-                )}
-              </svg>
-            </button>
+      <div className="flex h-screen bg-gray-50">
+        {/* Sidebar - Fixed Position */}
+        <aside className={`fixed left-0 top-0 h-screen bg-gradient-to-b from-slate-800 to-slate-900 shadow-2xl transition-all duration-300 z-40 ${isSidebarOpen ? 'w-64' : 'w-0'} overflow-hidden`}>
+          {/* Sidebar Header */}
+          <div className="h-20 flex items-center justify-between px-4 border-b border-slate-700 bg-slate-800">
+            {isSidebarOpen && (
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
+                  SP
+                </div>
+                <div className="text-white">
+                  <div className="text-sm font-bold">School Portal</div>
+                  <div className="text-xs text-indigo-300">Admin Panel</div>
+                </div>
+              </div>
+            )}
           </div>
-          
-          <nav className="p-4 space-y-2">
-            <button
-              className={`w-full flex items-center px-4 py-2.5 text-left rounded-lg transition-colors ${
-                activeTab === 'overview'
-                  ? 'bg-indigo-50 text-indigo-600'
-                  : 'text-gray-600 hover:bg-gray-50'
-              }`}
-              onClick={() => setActiveTab('overview')}
-            >
-              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-              </svg>
-              Overview
-            </button>
-            
-            <button
-              className={`w-full flex items-center px-4 py-2.5 text-left rounded-lg transition-colors ${
-                activeTab === 'students'
-                  ? 'bg-indigo-50 text-indigo-600'
-                  : 'text-gray-600 hover:bg-gray-50'
-              }`}
-              onClick={() => setActiveTab('students')}
-            >
-              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              Students
-            </button>
 
-            <button
-              className={`w-full flex items-center px-4 py-2.5 text-left rounded-lg transition-colors ${
-                activeTab === 'teachers'
-                  ? 'bg-indigo-50 text-indigo-600'
-                  : 'text-gray-600 hover:bg-gray-50'
-              }`}
-              onClick={() => setActiveTab('teachers')}
-            >
-              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              Teachers
-            </button>
-
-            <button
-              className={`w-full flex items-center px-4 py-2.5 text-left rounded-lg transition-colors ${
-                activeTab === 'courses'
-                  ? 'bg-indigo-50 text-indigo-600'
-                  : 'text-gray-600 hover:bg-gray-50'
-              }`}
-              onClick={() => setActiveTab('courses')}
-            >
-              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              Courses
-            </button>
-
-            <button
-              className={`w-full flex items-center px-4 py-2.5 text-left rounded-lg transition-colors ${
-                activeTab === 'reports'
-                  ? 'bg-indigo-50 text-indigo-600'
-                  : 'text-gray-600 hover:bg-gray-50'
-              }`}
-              onClick={() => setActiveTab('reports')}
-            >
-              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Reports
-            </button>
+          {/* Navigation Menu */}
+          <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-140px)]">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
+                  activeTab === item.id
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg'
+                    : 'text-slate-300 hover:bg-slate-700/50'
+                }`}
+                title={!isSidebarOpen ? item.label : ''}
+              >
+                <span className="text-xl">{item.icon}</span>
+                {isSidebarOpen && <span className="ml-3 text-sm font-medium">{item.label}</span>}
+              </button>
+            ))}
           </nav>
 
-          <button
-            className="flex items-center w-full px-4 py-2.5 text-left text-gray-600 hover:bg-gray-50 transition-colors mt-auto border-t"
-            onClick={handleLogout}
-          >
-            <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            Logout
-          </button>
+          {/* Sidebar Footer - Logout */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-slate-900 border-t border-slate-700">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-lg transition-all duration-200"
+              title={!isSidebarOpen ? 'Logout' : ''}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              {isSidebarOpen && <span className="ml-3 text-sm font-medium">Logout</span>}
+            </button>
+          </div>
         </aside>
 
         {/* Main Content */}
-        <main className={`flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 transition-all duration-300 ${isSidebarOpen ? 'ml-0' : ''}`}>
-          <header className="bg-white shadow-sm">
-            <div className="mx-6 py-6">
-              <div className="flex items-center justify-between">
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
+          {/* Top Header */}
+          <header className="bg-white shadow-sm sticky top-0 z-30">
+            <div className="px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                {/* Toggle Sidebar Button - ALWAYS VISIBLE */}
+                <button
+                  onClick={toggleSidebar}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  title={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+                >
+                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+
+                {/* Page Title */}
                 <div>
-                  <h1 className="text-2xl font-semibold text-gray-900">Welcome Back, SuperAdmin</h1>
-                  <p className="mt-1 text-sm text-gray-600">Here's what's happening in your school today.</p>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {menuItems.find(m => m.id === activeTab)?.label || 'Dashboard'}
+                  </h1>
+                  <p className="text-sm text-gray-500 mt-1">Welcome back, SuperAdmin</p>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                  </button>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 font-semibold text-sm">
-                      SA
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-700">SuperAdmin</p>
-                      <p className="text-xs text-gray-500">Administrator</p>
-                    </div>
+              </div>
+
+              {/* Top Right Actions */}
+              <div className="flex items-center space-x-4">
+                {/* Notifications */}
+                <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+
+                {/* User Profile */}
+                <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-gray-900">SuperAdmin</p>
+                    <p className="text-xs text-gray-500">Administrator</p>
+                  </div>
+                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                    SA
                   </div>
                 </div>
               </div>
             </div>
           </header>
 
-          <div className="p-6">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              {stats.map((stat, index) => (
-                <div key={index} className="bg-white rounded-lg shadow-sm p-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{stat.label}</p>
+          {/* Page Content */}
+          <main className="flex-1 overflow-auto">
+            {activeTab === 'overview' && (
+              <div className="p-6 space-y-6">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {stats.map((stat, index) => (
+                    <div key={index} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border-l-4 border-indigo-500">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600 font-medium">{stat.label}</p>
+                          <div className="mt-3 flex items-baseline space-x-3">
+                            <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
+                            <span className={`text-sm font-semibold ${stat.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                              {stat.trend}
+                            </span>
+                          </div>
+                        </div>
+                        <div className={`text-4xl p-3 rounded-lg bg-gradient-to-r ${stat.color} opacity-20`}>
+                          {stat.icon}
+                        </div>
+                      </div>
                     </div>
-                    <div className={`text-sm font-semibold ${stat.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                      {stat.trend}
+                  ))}
+                </div>
+
+                {/* Recent Activity & Quick Actions */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Recent Activity */}
+                  <div className="lg:col-span-2 bg-white rounded-lg shadow-sm p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-lg font-bold text-gray-900">Recent Activity</h2>
+                      <button className="text-indigo-600 hover:text-indigo-700 text-sm font-semibold">View All</button>
+                    </div>
+                    <div className="space-y-4">
+                      {recentActivities.map((activity) => (
+                        <div key={activity.id} className="flex items-start space-x-4 pb-4 border-b border-gray-100 last:border-b-0">
+                          <div className="text-2xl">{activity.icon}</div>
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-900">
+                              <span className="font-semibold">{activity.user}</span> {activity.action}
+                            </p>
+                            <span className="text-xs text-gray-500">{activity.time}</span>
+                          </div>
+                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium capitalize">
+                            {activity.type}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
+                    <h2 className="text-lg font-bold text-gray-900">Quick Stats</h2>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <p className="text-xs text-blue-600 font-semibold uppercase">Attendance Rate</p>
+                        <p className="text-2xl font-bold text-blue-900 mt-2">87%</p>
+                        <div className="w-full bg-blue-200 rounded-full h-2 mt-3">
+                          <div className="bg-blue-600 h-2 rounded-full w-[87%]"></div>
+                        </div>
+                      </div>
+
+                      <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <p className="text-xs text-green-600 font-semibold uppercase">Completion Rate</p>
+                        <p className="text-2xl font-bold text-green-900 mt-2">92%</p>
+                        <div className="w-full bg-green-200 rounded-full h-2 mt-3">
+                          <div className="bg-green-600 h-2 rounded-full w-[92%]"></div>
+                        </div>
+                      </div>
+
+                      <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <p className="text-xs text-purple-600 font-semibold uppercase">System Health</p>
+                        <p className="text-2xl font-bold text-purple-900 mt-2">99%</p>
+                        <div className="w-full bg-purple-200 rounded-full h-2 mt-3">
+                          <div className="bg-purple-600 h-2 rounded-full w-[99%]"></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
 
-            {/* Recent Activity */}
-            <section className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-              <div className="space-y-4">
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-4">
-                    <span className="text-2xl">{activity.icon}</span>
-                    <div>
-                      <p className="text-sm text-gray-900">
-                        <span className="font-medium">{activity.user}</span> {activity.action}
-                      </p>
-                      <span className="text-xs text-gray-500">{activity.time}</span>
-                    </div>
+                {/* Quick Actions */}
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button 
+                      className="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all"
+                      onClick={() => setShowModal(true)}
+                    >
+                      <span className="text-3xl mb-2">👤</span>
+                      <span className="text-sm font-semibold text-gray-700">Add New User</span>
+                    </button>
+                    <button 
+                      className="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all"
+                      onClick={() => setActiveTab('roles')}
+                    >
+                      <span className="text-3xl mb-2">🔐</span>
+                      <span className="text-sm font-semibold text-gray-700">Manage Roles</span>
+                    </button>
+                    <button 
+                      className="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
+                      onClick={() => showTestAlert('success')}
+                    >
+                      <span className="text-3xl mb-2">📊</span>
+                      <span className="text-sm font-semibold text-gray-700">View Reports</span>
+                    </button>
+                    <button 
+                      className="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all"
+                      onClick={() => showTestAlert('warning')}
+                    >
+                      <span className="text-3xl mb-2">⚙️</span>
+                      <span className="text-sm font-semibold text-gray-700">Settings</span>
+                    </button>
                   </div>
-                ))}
+                </div>
               </div>
-            </section>
+            )}
 
-            {/* Quick Actions */}
-            <section className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <button 
-                  className="flex flex-col items-center justify-center p-6 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                  onClick={() => setShowModal(true)}
-                >
-                  <svg className="w-8 h-8 text-indigo-600 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">Add New Student</span>
-                </button>
-                <button 
-                  className="flex flex-col items-center justify-center p-6 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                  onClick={() => showTestAlert('success')}
-                >
-                  <svg className="w-8 h-8 text-green-600 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">Test Success Alert</span>
-                </button>
-                <button 
-                  className="flex flex-col items-center justify-center p-6 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                  onClick={() => showTestAlert('error')}
-                >
-                  <svg className="w-8 h-8 text-red-600 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">Test Error Alert</span>
-                </button>
-                <button 
-                  className="flex flex-col items-center justify-center p-6 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                  onClick={() => showTestAlert('warning')}
-                >
-                  <svg className="w-8 h-8 text-yellow-600 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">Test Warning Alert</span>
-                </button>
+            {activeTab === 'users' && (
+              <div className="p-6">
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4">User Management</h2>
+                  <p className="text-gray-600">User management section coming soon...</p>
+                </div>
               </div>
-            </section>
+            )}
 
-            {/* Test Components Section */}
-            <section className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Test Notifications</h2>
-              <div className="flex space-x-4">
-                <button 
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                  onClick={() => showTestAlert('info')}
-                >
-                  Show Info Alert
-                </button>
-                <button 
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                  onClick={() => setShowModal(true)}
-                >
-                  Open Test Modal
-                </button>
+            {activeTab === 'roles' && (
+              <div className="p-6">
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4">Roles & Permissions</h2>
+                  <p className="text-gray-600">Role management section coming soon...</p>
+                </div>
               </div>
-            </section>
-          </div>
+            )}
 
-          {/* Alert Component */}
-          <Alert
-            type={alertType}
-            title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
-            message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
-            show={showAlert}
-            onClose={() => setShowAlert(false)}
-            autoClose={5000}
-          />
-
-          {/* Modal Component */}
-          <Modal
-            show={showModal}
-            onClose={() => setShowModal(false)}
-            title="Test Modal"
-            primaryButton={{
-              text: "Confirm",
-              onClick: () => {
-                showTestAlert('success');
-                console.log("Modal confirmed!");
-              }
-            }}
-            secondaryButton={{
-              text: "Cancel",
-              onClick: () => console.log("Modal cancelled!")
-            }}
-          >
-            <p>This is a test modal to demonstrate the functionality. You can close it by:</p>
-            <ul className="mt-3 ml-6 list-disc">
-              <li>Clicking the X button</li>
-              <li>Clicking outside the modal</li>
-              <li>Pressing the ESC key</li>
-              <li>Using the Cancel or Confirm buttons</li>
-            </ul>
-          </Modal>
-        </main>
+            {['students', 'teachers', 'courses', 'reports', 'settings'].includes(activeTab) && (
+              <div className="p-6">
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4">
+                    {menuItems.find(m => m.id === activeTab)?.label || 'Section'}
+                  </h2>
+                  <p className="text-gray-600">This section is under development...</p>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
       </div>
+
+      {/* Alert Component */}
+      <Alert
+        type={alertType}
+        title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
+        message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
+        show={showAlert}
+        onClose={() => setShowAlert(false)}
+        autoClose={5000}
+      />
+
+      {/* Modal Component */}
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Add New User"
+        primaryButton={{
+          text: "Create",
+          onClick: () => {
+            showTestAlert('success');
+            console.log("User created!");
+            setShowModal(false);
+          }
+        }}
+        secondaryButton={{
+          text: "Cancel",
+          onClick: () => {
+            setShowModal(false);
+            console.log("Cancelled!");
+          }
+        }}
+      >
+        <p>User creation form will be displayed here with role assignment options.</p>
+      </Modal>
     </>
   );
 }
