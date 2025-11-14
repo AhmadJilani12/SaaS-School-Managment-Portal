@@ -60,6 +60,8 @@ export default function AdminDashboard() {
   const [showTestReportModal, setShowTestReportModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentRemark, setStudentRemark] = useState('');
+  const [showTeacherProfileModal, setShowTeacherProfileModal] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
 
   // Dummy Students Data with Marks and Remarks
   const [sectionStudents, setSectionStudents] = useState({
@@ -1147,18 +1149,35 @@ export default function AdminDashboard() {
                 <h3 className="text-md font-semibold text-gray-900 mb-4">Class Teacher Assignment</h3>
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">Select Class Teacher *</label>
-                  <select
-                    value={classFormData.classTeacher}
-                    onChange={(e) => setClassFormData({ ...classFormData, classTeacher: e.target.value })}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-                  >
-                    <option value="">Select a teacher</option>
-                    {teachers.map((teacher) => (
-                      <option key={teacher.id} value={teacher.name}>
-                        {teacher.name} - {teacher.subject}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      value={classFormData.classTeacher}
+                      onChange={(e) => setClassFormData({ ...classFormData, classTeacher: e.target.value })}
+                      className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                    >
+                      <option value="">Select a teacher</option>
+                      {teachers.map((teacher) => (
+                        <option key={teacher.id} value={teacher.name}>
+                          {teacher.name} - {teacher.subject}
+                        </option>
+                      ))}
+                    </select>
+                    {classFormData.classTeacher && (
+                      <button
+                        onClick={() => {
+                          const selectedTeacherObj = teachers.find(t => t.name === classFormData.classTeacher);
+                          if (selectedTeacherObj) {
+                            setSelectedTeacher(selectedTeacherObj);
+                            setShowTeacherProfileModal(true);
+                          }
+                        }}
+                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold whitespace-nowrap"
+                        title="View Teacher Profile"
+                      >
+                        👤 View Profile
+                      </button>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500 mt-2">The selected teacher will be responsible for this entire class.</p>
                 </div>
               </div>
@@ -1194,6 +1213,423 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      {/* Remarks Modal */}
+      {showRemarkModal && selectedStudent && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 flex items-center justify-between text-white border-b">
+              <h2 className="text-lg font-bold">📝 Student Remarks & Homework</h2>
+              <button
+                onClick={() => setShowRemarkModal(false)}
+                className="text-white hover:bg-white/20 p-1 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {/* Student Info */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-600 font-semibold">STUDENT NAME</p>
+                    <p className="text-lg font-bold text-gray-900">{selectedStudent.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 font-semibold">ROLL NO</p>
+                    <p className="text-lg font-bold text-gray-900">{selectedStudent.rollNo}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Remarks Section */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">📌 Academic Remarks</h3>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Remarks/Comments</label>
+                  <textarea
+                    value={studentRemark}
+                    onChange={(e) => setStudentRemark(e.target.value)}
+                    placeholder="Enter remarks about student performance, behavior, areas of improvement, etc..."
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 resize-vertical min-h-[120px]"
+                  />
+                  <p className="text-xs text-gray-500 mt-2">Max 500 characters</p>
+                </div>
+              </div>
+
+              {/* Performance Summary */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">📊 Performance Summary</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-xs text-gray-600 font-semibold">MID EXAM</p>
+                    <p className="text-2xl font-bold text-blue-600">{selectedStudent.midExam}</p>
+                  </div>
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                    <p className="text-xs text-gray-600 font-semibold">FINAL EXAM</p>
+                    <p className="text-2xl font-bold text-purple-600">{selectedStudent.finalExam}</p>
+                  </div>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="text-xs text-gray-600 font-semibold">PERCENTAGE</p>
+                    <p className="text-2xl font-bold text-green-600">{selectedStudent.percentage}%</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Homework Status */}
+              <div>
+                <h3 className="text-md font-semibold text-gray-900 mb-4">📚 Homework Status</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <div>
+                      <p className="font-semibold text-gray-900">Overall Homework Status</p>
+                      <p className="text-sm text-gray-600">{selectedStudent.homeWork || 'Active'}</p>
+                    </div>
+                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
+                      ✓ Assigned
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-blue-700">
+                  <strong>Note:</strong> Remarks are visible to parents and students. Keep them constructive and professional.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
+              <button
+                onClick={() => setShowRemarkModal(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  showTestAlert('success', 'Remarks saved successfully!');
+                  setShowRemarkModal(false);
+                }}
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+              >
+                Save Remarks
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Class Test Report Modal */}
+      {showTestReportModal && selectedStudent && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4 flex items-center justify-between text-white border-b">
+              <h2 className="text-lg font-bold">📄 Class Test Reports & Homework</h2>
+              <button
+                onClick={() => setShowTestReportModal(false)}
+                className="text-white hover:bg-white/20 p-1 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {/* Student Info */}
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-600 font-semibold">STUDENT NAME</p>
+                    <p className="text-lg font-bold text-gray-900">{selectedStudent.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 font-semibold">ROLL NO</p>
+                    <p className="text-lg font-bold text-gray-900">{selectedStudent.rollNo}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Class Tests Section */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">📋 Class Test Results</h3>
+                {selectedStudent.classTests && selectedStudent.classTests.length > 0 ? (
+                  <div className="space-y-3">
+                    {selectedStudent.classTests.map((test, index) => (
+                      <div key={index} className="border border-purple-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <p className="font-semibold text-gray-900">Test {index + 1}: {test.subject || 'General'}</p>
+                            <p className="text-sm text-gray-600">📅 Date: {test.date || 'N/A'}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold text-purple-600">{test.marks}/{test.total}</p>
+                            <p className="text-xs text-gray-600">Marks Obtained</p>
+                          </div>
+                        </div>
+                        <div className="bg-gray-100 rounded-full h-2 w-full">
+                          <div
+                            className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all"
+                            style={{ width: `${(test.marks / test.total) * 100}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex items-center justify-between mt-3">
+                          <span className="text-sm font-semibold text-gray-700">
+                            Percentage: {((test.marks / test.total) * 100).toFixed(1)}%
+                          </span>
+                          {test.pdfUrl && (
+                            <a
+                              href={test.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm font-semibold hover:bg-purple-200 transition-colors"
+                            >
+                              📎 View PDF
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                    <p className="text-gray-600 font-semibold">No class tests recorded yet</p>
+                    <p className="text-sm text-gray-500 mt-1">Tests will appear here once added</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Homework Section */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">📚 Homework & Assignments</h3>
+                <div className="space-y-3">
+                  <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-gray-900">Current Homework Status</p>
+                        <p className="text-sm text-gray-600 mt-1">{selectedStudent.homeWork || 'All assignments active and on track'}</p>
+                      </div>
+                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
+                        ✓ Active
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+                      <p className="text-2xl font-bold text-blue-600">5</p>
+                      <p className="text-xs text-gray-600 font-semibold mt-1">Pending</p>
+                    </div>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                      <p className="text-2xl font-bold text-green-600">12</p>
+                      <p className="text-xs text-gray-600 font-semibold mt-1">Submitted</p>
+                    </div>
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+                      <p className="text-2xl font-bold text-red-600">1</p>
+                      <p className="text-xs text-gray-600 font-semibold mt-1">Late</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Overall Performance */}
+              <div>
+                <h3 className="text-md font-semibold text-gray-900 mb-4">📊 Overall Performance</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-600 font-semibold">AVERAGE TEST SCORE</p>
+                    <p className="text-3xl font-bold text-indigo-600 mt-2">
+                      {selectedStudent.classTests && selectedStudent.classTests.length > 0
+                        ? (selectedStudent.classTests.reduce((sum, t) => sum + (t.marks / t.total) * 100, 0) / selectedStudent.classTests.length).toFixed(1)
+                        : 'N/A'}%
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-100 border border-green-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-600 font-semibold">OVERALL GRADE</p>
+                    <p className="text-3xl font-bold text-green-600 mt-2">{selectedStudent.grade || 'A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <p className="text-sm text-purple-700">
+                  <strong>Note:</strong> Class tests and homework records are automatically synced from the system.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
+              <button
+                onClick={() => setShowTestReportModal(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Close
+              </button>
+              <a
+                href="#"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+              >
+                📥 Download Report
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Teacher Profile Modal */}
+      {showTeacherProfileModal && selectedTeacher && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-4 flex items-center justify-between text-white border-b">
+              <h2 className="text-lg font-bold">👩‍🏫 Teacher Profile</h2>
+              <button
+                onClick={() => setShowTeacherProfileModal(false)}
+                className="text-white hover:bg-white/20 p-1 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {/* Profile Header with Status */}
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-6 flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-2xl font-bold text-gray-900">{selectedTeacher.name}</h1>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      selectedTeacher.status === 'Active' 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-red-100 text-red-700'
+                    }`}>
+                      {selectedTeacher.status}
+                    </span>
+                  </div>
+                  <p className="text-emerald-700 font-semibold mt-1">🎓 {selectedTeacher.subject}</p>
+                </div>
+              </div>
+
+              {/* Basic Information */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">📋 Basic Information</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-600 font-semibold">EMAIL ADDRESS</p>
+                    <p className="text-gray-900 font-medium mt-1">📧 {selectedTeacher.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 font-semibold">PHONE NUMBER</p>
+                    <p className="text-gray-900 font-medium mt-1">📱 {selectedTeacher.phone}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Academic Qualifications */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">🎯 Academic Qualifications</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-600 font-semibold">QUALIFICATION</p>
+                    <p className="text-lg font-bold text-blue-600 mt-2">{selectedTeacher.qualification}</p>
+                  </div>
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-600 font-semibold">EXPERIENCE</p>
+                    <p className="text-lg font-bold text-purple-600 mt-2">{selectedTeacher.experience}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Department & Subject */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">🏢 Department & Subject</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-600 font-semibold">DEPARTMENT</p>
+                    <p className="text-lg font-bold text-orange-600 mt-2">{selectedTeacher.department}</p>
+                  </div>
+                  <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-600 font-semibold">SUBJECT</p>
+                    <p className="text-lg font-bold text-pink-600 mt-2">{selectedTeacher.subject}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Performance & Assignments */}
+              <div className="border-b pb-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">📊 Performance Metrics</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-lg p-3 text-center">
+                    <p className="text-2xl font-bold text-indigo-600">4</p>
+                    <p className="text-xs text-gray-600 font-semibold mt-1">Classes Assigned</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-3 text-center">
+                    <p className="text-2xl font-bold text-green-600">156</p>
+                    <p className="text-xs text-gray-600 font-semibold mt-1">Total Students</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-lg p-3 text-center">
+                    <p className="text-2xl font-bold text-yellow-600">94%</p>
+                    <p className="text-xs text-gray-600 font-semibold mt-1">Rating</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Details */}
+              <div>
+                <h3 className="text-md font-semibold text-gray-900 mb-4">ℹ️ Additional Details</h3>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 font-semibold">Joining Date:</span>
+                    <span className="text-gray-900">January 15, 2020</span>
+                  </div>
+                  <div className="flex justify-between border-t pt-2">
+                    <span className="text-gray-600 font-semibold">Total Leave Balance:</span>
+                    <span className="text-gray-900">8 days</span>
+                  </div>
+                  <div className="flex justify-between border-t pt-2">
+                    <span className="text-gray-600 font-semibold">Last Updated:</span>
+                    <span className="text-gray-900">November 10, 2025</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                <p className="text-sm text-emerald-700">
+                  <strong>Note:</strong> This teacher has an excellent track record with consistent positive feedback from students and parents.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
+              <button
+                onClick={() => setShowTeacherProfileModal(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  showTestAlert('success', 'Profile saved!');
+                  setShowTeacherProfileModal(false);
+                }}
+                className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+              >
+                ✓ Assign as Class Teacher
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
+
