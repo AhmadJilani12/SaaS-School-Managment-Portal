@@ -25,7 +25,6 @@ export default function LoginPage() {
     let typingTimeout;
     
     if (formData.email || formData.password) {
-      // Set different eye states for password and email
       setEyePosition(prev => ({
         x: Math.random() > 0.5 ? 8 : -8,
         focused: true,
@@ -33,12 +32,10 @@ export default function LoginPage() {
         isTyping: true
       }));
 
-      // Reset pupil position after movement
       const positionTimeout = setTimeout(() => {
         setEyePosition(prev => ({ ...prev, x: 0 }));
       }, 400);
 
-      // Keep eyes alert for 2 seconds after typing
       typingTimeout = setTimeout(() => {
         setEyePosition(prev => ({ ...prev, isTyping: false }));
       }, 2000);
@@ -56,9 +53,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Check for SuperAdmin credentials
       if (formData.email === 'SuperAdmin' && formData.password === '12345678') {
-        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 800));
         router.push('/admin/dashboard');
       } else {
         throw new Error('Invalid credentials. Please try again.');
@@ -76,7 +72,6 @@ export default function LoginPage() {
       ...prev,
       [name]: value
     }));
-    // Update eye state based on which field is being typed in
     setEyePosition(prev => ({
       ...prev,
       isPasswordField: name === 'password'
@@ -147,7 +142,7 @@ export default function LoginPage() {
               </svg>
             </div>
 
-            {/* Right Eye */}
+            {/* Right Eye (same structure as left) */}
             <div className="relative" style={{ transformStyle: 'preserve-3d' }}>
               <svg 
                 width="100" 
