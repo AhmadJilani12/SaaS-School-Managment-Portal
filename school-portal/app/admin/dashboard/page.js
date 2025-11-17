@@ -62,6 +62,7 @@ export default function AdminDashboard() {
   const [studentRemark, setStudentRemark] = useState('');
   const [showTeacherProfileModal, setShowTeacherProfileModal] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
   // Dummy Students Data with Marks and Remarks
   const [sectionStudents, setSectionStudents] = useState({
@@ -238,15 +239,71 @@ export default function AdminDashboard() {
                   <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
 
-                {/* User Profile */}
-                <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">SuperAdmin</p>
-                    <p className="text-xs text-gray-500">Administrator</p>
-                  </div>
-                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    SA
-                  </div>
+                {/* User Profile Dropdown */}
+                <div className="flex items-center space-x-3 pl-4 border-l border-gray-200 relative" data-profile-dropdown>
+                  <button
+                    onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                    className="flex items-center space-x-3 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-gray-900">SuperAdmin</p>
+                      <p className="text-xs text-gray-500">Administrator</p>
+                    </div>
+                    <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      SA
+                    </div>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {showProfileDropdown && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-50 py-2">
+                      {/* User Info Header */}
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <p className="text-sm font-semibold text-gray-900">SuperAdmin</p>
+                        <p className="text-xs text-gray-500">Administrator Role</p>
+                        <p className="text-xs text-green-600 mt-1">✓ Active</p>
+                      </div>
+
+                      {/* View Profile Option */}
+                      <button
+                        onClick={() => {
+                          setShowProfileDropdown(false);
+                          showTestAlert('info', 'Opening your profile...');
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors flex items-center space-x-2"
+                      >
+                        <span>👤</span>
+                        <span className="text-sm text-gray-700 font-medium">View Profile</span>
+                      </button>
+
+                      {/* Edit Profile Option */}
+                      <button
+                        onClick={() => {
+                          setShowProfileDropdown(false);
+                          showTestAlert('info', 'Opening profile settings...');
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors flex items-center space-x-2"
+                      >
+                        <span>✏️</span>
+                        <span className="text-sm text-gray-700 font-medium">Edit Profile</span>
+                      </button>
+
+                      <div className="border-t border-gray-200 my-2"></div>
+
+                      {/* Logout Option */}
+                      <button
+                        onClick={() => {
+                          setShowProfileDropdown(false);
+                          showTestAlert('success', 'Logged out successfully!');
+                          setTimeout(() => router.push('/login'), 1500);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-red-50 transition-colors flex items-center space-x-2"
+                      >
+                        <span>🚪</span>
+                        <span className="text-sm text-red-600 font-medium">Logout</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
