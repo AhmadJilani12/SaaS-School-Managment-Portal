@@ -1,5 +1,4 @@
-// /models/Permission.js
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const PermissionSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
@@ -7,5 +6,5 @@ const PermissionSchema = new mongoose.Schema({
   module: { type: String, required: true },
 });
 
-export default mongoose.models.Permission ||
-  mongoose.model("Permission", PermissionSchema);
+// CommonJS export
+module.exports = mongoose.models.Permission || mongoose.model("Permission", PermissionSchema);

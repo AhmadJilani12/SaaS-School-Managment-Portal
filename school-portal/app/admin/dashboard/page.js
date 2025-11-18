@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Alert from '../../../components/Alert';
 import Modal from '../../../components/Modal';
@@ -19,6 +19,20 @@ export default function AdminDashboard() {
     roleDescription: '',
     permissions: []
   });
+  const [permissions, setPermissions] = useState([]);
+const [loadingPermissions, setLoadingPermissions] = useState(false);
+
+{/* Permissions Section with dynamic border colors */}
+const colors = [
+  "border-red-500",
+  "border-green-500",
+  "border-blue-500",
+  "border-yellow-500",
+  "border-purple-500",
+  "border-pink-500",
+  "border-indigo-500",
+  "border-teal-500",
+];
   const [teacherFormData, setTeacherFormData] = useState({
     name: '',
     email: '',
@@ -29,6 +43,32 @@ export default function AdminDashboard() {
     department: ''
   });
 
+
+  useEffect(() => {
+  if (showRoleModal) {
+    setLoadingPermissions(true);
+    fetch("/api/rbac/permissions")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Permissions API response:", data);
+
+        // Your API returns { permissions: { student: [...], attendance: [...], grade: [...] } }
+        // So we need to store data.permissions directly
+        if (data && data.permissions) {
+          setPermissions(data.permissions);
+        } else {
+          setPermissions({});
+        }
+
+        setLoadingPermissions(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load permissions", err);
+        setPermissions({});
+        setLoadingPermissions(false);
+      });
+  }
+}, [showRoleModal]);
   // Dummy Teachers Data
   const [teachers, setTeachers] = useState([
     { id: 1, name: 'Ahmed Khan', email: 'ahmed@school.com', subject: 'Mathematics', phone: '03001234567', qualification: 'M.Sc', experience: '5 years', department: 'Science', status: 'Active' },
@@ -1175,63 +1215,50 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              {/* Permissions Section */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-4">Permissions</label>
-                <div className="space-y-6">
-                  {/* Students Permissions */}
-                  <div className="border-l-4 border-blue-500 pl-4">
-                    <h4 className="font-semibold text-gray-900 mb-3">Student Management</h4>
-                    <div className="space-y-2">
-                      {['View Students', 'Create Student', 'Edit Student', 'Delete Student', 'View Grades'].map((perm) => (
-                        <label key={perm} className="flex items-center space-x-3 cursor-pointer">
-                          <input type="checkbox" className="w-4 h-4 text-indigo-600 rounded focus:ring-2" />
-                          <span className="text-sm text-gray-700">{perm}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+ {/* Permissions Heading */}
+  <div>
+    <h3 className="text-lg font-bold text-gray-900 mb-3">Permissions</h3>
+  </div>
 
-                  {/* Teachers Permissions */}
-                  <div className="border-l-4 border-green-500 pl-4">
-                    <h4 className="font-semibold text-gray-900 mb-3">Teacher Management</h4>
-                    <div className="space-y-2">
-                      {['View Teachers', 'Create Teacher', 'Edit Teacher', 'Delete Teacher', 'Assign Classes'].map((perm) => (
-                        <label key={perm} className="flex items-center space-x-3 cursor-pointer">
-                          <input type="checkbox" className="w-4 h-4 text-indigo-600 rounded focus:ring-2" />
-                          <span className="text-sm text-gray-700">{perm}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+{loadingPermissions ? (
+    <div className="flex justify-center py-10">
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+    </div>
+  ) : (
+    permissions &&
+    Object.entries(permissions).map(([moduleName, perms], index) => {
+      const borderColor = colors[index % colors.length];
 
-                  {/* Grades & Attendance */}
-                  <div className="border-l-4 border-purple-500 pl-4">
-                    <h4 className="font-semibold text-gray-900 mb-3">Grades & Attendance</h4>
-                    <div className="space-y-2">
-                      {['View Grades', 'Create Grade', 'Mark Attendance', 'View Attendance', 'Generate Reports'].map((perm) => (
-                        <label key={perm} className="flex items-center space-x-3 cursor-pointer">
-                          <input type="checkbox" className="w-4 h-4 text-indigo-600 rounded focus:ring-2" />
-                          <span className="text-sm text-gray-700">{perm}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+      return (
+        <div
+          key={moduleName}
+          className={`border-l-4 ${borderColor} pl-4 mb-4 bg-gray-50 p-3 rounded-md`}
+        >
+          <h4 className="font-semibold mb-2 capitalize">{moduleName}</h4>
+          <div className="space-y-2">
+            {(Array.isArray(perms) ? perms : []).map((perm) => (
+              <label key={perm.name} className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-5 h-5 text-gray-800 rounded focus:ring-2 focus:ring-gray-400"
+                  value={perm.name}
+                  checked={roleFormData.permissions?.includes(perm.name) || false}
+                  onChange={(e) => {
+                    const newPermissions = e.target.checked
+                      ? [...(roleFormData.permissions || []), perm.name]
+                      : (roleFormData.permissions || []).filter((p) => p !== perm.name);
+                    setRoleFormData({ ...roleFormData, permissions: newPermissions });
+                  }}
+                />
+                <span className="text-sm text-gray-800">{perm.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      );
+    })
+  )}
 
-                  {/* System Admin */}
-                  <div className="border-l-4 border-orange-500 pl-4">
-                    <h4 className="font-semibold text-gray-900 mb-3">System Administration</h4>
-                    <div className="space-y-2">
-                      {['Manage Users', 'Manage Roles', 'View Audit Logs', 'System Settings', 'Backup Data'].map((perm) => (
-                        <label key={perm} className="flex items-center space-x-3 cursor-pointer">
-                          <input type="checkbox" className="w-4 h-4 text-indigo-600 rounded focus:ring-2" />
-                          <span className="text-sm text-gray-700">{perm}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Modal Footer */}
