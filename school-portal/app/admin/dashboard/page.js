@@ -1270,11 +1270,40 @@ const colors = [
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  showTestAlert('success');
-                  setShowRoleModal(false);
-                  setRoleFormData({ roleName: '', roleDescription: '', permissions: [] });
-                }}
+                onClick={async () => {
+    try {
+      const res = await fetch("/api/rbac/roles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roleName: roleFormData.roleName,
+          roleDescription: roleFormData.roleDescription,
+          permissions: roleFormData.permissions, // selected permission names
+        }),
+      });
+
+      const data = await res.json();
+      
+
+      if (res.ok && data.success) {
+        showTestAlert("success"); // aapka custom alert
+        setShowRoleModal(false);
+
+        // Reset form
+        setRoleFormData({
+          roleName: "",
+          roleDescription: "",
+          permissions: [],
+        });
+      } else {
+        console.log("This is the data", data);
+        alert("Error: " + data.error);
+      }
+    } catch (err) {
+      console.log("This is the Error" , err);
+      alert("Request failed: " + err.message);
+    }
+  }}
                 className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
               >
                 Create Role
