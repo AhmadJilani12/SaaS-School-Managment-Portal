@@ -5,11 +5,52 @@ export default function RolePermission() {
   const [permissions, setPermissions] = useState({});
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [roleFormData, setRoleFormData] = useState({
     roleName: "",
     roleDescription: "",
     permissions: [],
   });
+
+  {/* Permissions Section with dynamic border colors */}
+  const colors = [
+    "border-red-500",
+    "border-green-500",
+    "border-blue-500",
+    "border-yellow-500",
+    "border-purple-500",
+    "border-pink-500",
+    "border-indigo-500",
+    "border-teal-500",
+  ];
+
+const [loadingPermissions, setLoadingPermissions] = useState(false);
+
+    useEffect(() => {
+    if (showRoleModal) {
+      setLoadingPermissions(true);
+      fetch("/api/rbac/permissions")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Permissions API response:", data);
+  
+          // Your API returns { permissions: { student: [...], attendance: [...], grade: [...] } }
+          // So we need to store data.permissions directly
+          if (data && data.permissions) {
+            setPermissions(data.permissions);
+          } else {
+            setPermissions({});
+          }
+  
+          setLoadingPermissions(false);
+        })
+        .catch((err) => {
+          console.error("Failed to load permissions", err);
+          setPermissions({});
+          setLoadingPermissions(false);
+        });
+    }
+  }, [showRoleModal]);
 
   // Load roles + permissions from API
   const loadData = async () => {
@@ -80,7 +121,6 @@ export default function RolePermission() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-6">
                   <div className="flex items-center justify-between mb-6">
                     <div>
@@ -129,87 +169,141 @@ export default function RolePermission() {
                     </div>
                   </div>
                 </div>
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            {/* Header */}
-            <div className="sticky top-0 bg-indigo-600 px-6 py-4 text-white flex justify-between">
-              <h2 className="font-bold">Create New Role</h2>
-              <button onClick={() => setShowModal(false)}>✕</button>
+
+
+
+
+      {/* Modal Create Role Start */}
+        {showRoleModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Create New Role</h2>
+              <button
+                onClick={() => setShowRoleModal(false)}
+                className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
             </div>
 
-            {/* Body */}
+            {/* Modal Content */}
             <div className="p-6 space-y-6">
               {/* Role Name */}
               <div>
-                <label className="block font-semibold mb-1">Role Name *</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Role Name *</label>
                 <input
                   type="text"
-                  className="w-full border p-2 rounded"
-                  value={formData.roleName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roleName: e.target.value })
-                  }
+                  value={roleFormData.roleName}
+                  onChange={(e) => setRoleFormData({ ...roleFormData, roleName: e.target.value })}
+                  placeholder="e.g., Department Head, Accountant"
+                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
                 />
               </div>
 
-              {/* Description */}
+              {/* Role Description */}
               <div>
-                <label className="block font-semibold mb-1">Description</label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Description</label>
                 <textarea
+                  value={roleFormData.roleDescription}
+                  onChange={(e) => setRoleFormData({ ...roleFormData, roleDescription: e.target.value })}
+                  placeholder="Describe the purpose of this role..."
                   rows="3"
-                  className="w-full border p-2 rounded"
-                  value={formData.roleDescription}
-                  onChange={(e) =>
-                    setFormData({ ...formData, roleDescription: e.target.value })
-                  }
+                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
                 />
               </div>
 
-              {/* Permissions */}
-              <div>
-                <h3 className="font-bold mb-2">Permissions</h3>
-                {Object.keys(permissions).length === 0 ? (
-                  <p>Loading permissions...</p>
-                ) : (
-                  Object.entries(permissions).map(([moduleName, perms], i) => (
-                    <div
-                      key={moduleName}
-                      className="border-l-4 border-indigo-500 pl-4 mb-4 bg-gray-50 p-3 rounded-md"
-                    >
-                      <h4 className="font-semibold mb-2 capitalize">{moduleName}</h4>
-                      <div className="space-y-2">
-                        {(Array.isArray(perms) ? perms : []).map((perm) => (
-                          <label key={perm.name} className="flex items-center space-x-3">
-                            <input
-                              type="checkbox"
-                              className="w-5 h-5"
-                              checked={formData.permissions.includes(perm.name)}
-                              onChange={() => togglePermission(perm.name)}
-                            />
-                            <span>{perm.label}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+ {/* Permissions Heading */}
+  <div>
+    <h3 className="text-lg font-bold text-gray-900 mb-3">Permissions</h3>
+  </div>
+
+{loadingPermissions ? (
+    <div className="flex justify-center py-10">
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+    </div>
+  ) : (
+    permissions &&
+    Object.entries(permissions).map(([moduleName, perms], index) => {
+      const borderColor = colors[index % colors.length];
+
+      return (
+        <div
+          key={moduleName}
+          className={`border-l-4 ${borderColor} pl-4 mb-4 bg-gray-50 p-3 rounded-md`}
+        >
+          <h4 className="font-semibold mb-2 capitalize">{moduleName}</h4>
+          <div className="space-y-2">
+            {(Array.isArray(perms) ? perms : []).map((perm) => (
+              <label key={perm.name} className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-5 h-5 text-gray-800 rounded focus:ring-2 focus:ring-gray-400"
+                  value={perm.name}
+                  checked={roleFormData.permissions?.includes(perm.name) || false}
+                  onChange={(e) => {
+                    const newPermissions = e.target.checked
+                      ? [...(roleFormData.permissions || []), perm.name]
+                      : (roleFormData.permissions || []).filter((p) => p !== perm.name);
+                    setRoleFormData({ ...roleFormData, permissions: newPermissions });
+                  }}
+                />
+                <span className="text-sm text-gray-800">{perm.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      );
+    })
+  )}
+
             </div>
 
-            {/* Footer */}
-            <div className="flex justify-end gap-3 p-4 bg-gray-100">
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
               <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded"
+                onClick={() => setShowRoleModal(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
               >
                 Cancel
               </button>
               <button
-                disabled={!formData.roleName}
-                onClick={handleCreateRole}
-                className="px-4 py-2 bg-indigo-600 text-white rounded"
+                onClick={async () => {
+    try {
+      const res = await fetch("/api/rbac/roles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roleName: roleFormData.roleName,
+          roleDescription: roleFormData.roleDescription,
+          permissions: roleFormData.permissions, // selected permission names
+        }),
+      });
+
+      const data = await res.json();
+      
+
+      if (res.ok && data.success) {
+        showTestAlert("success"); // aapka custom alert
+        setShowRoleModal(false);
+
+        // Reset form
+        setRoleFormData({
+          roleName: "",
+          roleDescription: "",
+          permissions: [],
+        });
+      } else {
+        console.log("This is the data", data);
+        alert("Error: " + data.error);
+      }
+    } catch (err) {
+      console.log("This is the Error" , err);
+      alert("Request failed: " + err.message);
+    }
+  }}
+                className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
               >
                 Create Role
               </button>
@@ -217,6 +311,7 @@ export default function RolePermission() {
           </div>
         </div>
       )}
+      {/* Modal Create Role End */}
     </div>
   );
 }
