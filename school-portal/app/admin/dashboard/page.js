@@ -4,7 +4,7 @@ import { useState , useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Alert from '../../../components/Alert';
 import Modal from '../../../components/Modal';
-
+import RolePermission from  "./components/rolepermission";
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
@@ -479,56 +479,7 @@ const colors = [
             )}
 
             {activeTab === 'roles' && (
-              <div className="p-6 space-y-6">
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-lg font-bold text-gray-900">Roles & Permissions</h2>
-                      <p className="text-sm text-gray-600 mt-1">Manage roles and assign permissions to users</p>
-                    </div>
-                    <button
-                      onClick={() => setShowRoleModal(true)}
-                      className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold flex items-center space-x-2"
-                    >
-                      <span>➕</span>
-                      <span>Create New Role</span>
-                    </button>
-                  </div>
-
-                  {/* Predefined Roles */}
-                  <div className="mb-8">
-                    <h3 className="text-md font-semibold text-gray-900 mb-4">Predefined Roles</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {[
-                        { name: 'SuperAdmin', description: 'Full system access', users: 1, color: 'red' },
-                        { name: 'Admin', description: 'Administrative access', users: 5, color: 'orange' },
-                        { name: 'Teacher', description: 'Classroom management', users: 147, color: 'blue' },
-                        { name: 'Student', description: 'Student access', users: 2845, color: 'green' },
-                        { name: 'Parent', description: 'Parent access', users: 1200, color: 'purple' },
-                      ].map((role) => (
-                        <div key={role.name} className={`border-l-4 border-${role.color}-500 bg-${role.color}-50 p-4 rounded-lg`}>
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h4 className="font-semibold text-gray-900">{role.name}</h4>
-                              <p className="text-sm text-gray-600 mt-1">{role.description}</p>
-                              <p className="text-xs text-gray-500 mt-2">{role.users} users assigned</p>
-                            </div>
-                            <button className="text-gray-400 hover:text-gray-600">⋮</button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Custom Roles */}
-                  <div>
-                    <h3 className="text-md font-semibold text-gray-900 mb-4">Custom Roles</h3>
-                    <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-                      <p className="text-gray-500">No custom roles created yet. Click "Create New Role" to add one.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <RolePermission></RolePermission>
             )}
 
             {activeTab === 'teachers' && (
