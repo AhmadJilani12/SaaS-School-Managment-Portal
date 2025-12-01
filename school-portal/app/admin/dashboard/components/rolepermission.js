@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Alert from "../../../../components/Alert.js";
 
 
+
 export default function RolePermission() {
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState({});
@@ -42,6 +43,7 @@ export default function RolePermission() {
       fetch("/api/rbac/permissions")
         .then((res) => res.json())
         .then((data) => {
+          console.log("Yes i am inside the role and permission");
           console.log("Permissions API response:", data);
           if (data && data.permissions) {
             setPermissions(data.permissions);
