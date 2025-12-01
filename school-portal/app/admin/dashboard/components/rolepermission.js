@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import Alert from "../../../../components/Alert";
+import Alert from "../../../../components/Alert.js";
 
 export default function RolePermission() {
   const [roles, setRoles] = useState([]);
@@ -144,6 +144,17 @@ export default function RolePermission() {
             <span>Create New Role</span>
           </button>
         </div>
+
+
+  {/* Alert Component */}
+      <Alert
+        type={alertType}
+        title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
+        message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
+        show={showAlert}
+        onClose={() => setShowAlert(false)}
+        autoClose={5000}
+      />
 
         {/* Predefined Roles */}
         <div className="mb-8">
@@ -322,15 +333,11 @@ export default function RolePermission() {
       )}
       {/* Modal Create Role End */}
     </div>
+
+
+
+
   );
 }
 
-    {/* Alert Component */}
-      <Alert
-        type={alertType}
-        title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
-        message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
-        show={showAlert}
-        onClose={() => setShowAlert(false)}
-        autoClose={5000}
-      />
+  

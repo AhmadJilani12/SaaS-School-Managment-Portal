@@ -2,7 +2,7 @@
 
 import { useState , useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Alert from '../../../components/Alert';
+import Alert from '../../../components/Alert.js';
 import Modal from '../../../components/Modal';
 import RolePermission from  "./components/rolepermission";
 export default function AdminDashboard() {
