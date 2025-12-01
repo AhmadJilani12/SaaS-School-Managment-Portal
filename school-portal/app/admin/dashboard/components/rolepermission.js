@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-
 import Alert from "../../../../components/Alert.js";
+
 
 export default function RolePermission() {
   const [roles, setRoles] = useState([]);
@@ -9,6 +9,7 @@ export default function RolePermission() {
   const [showModal, setShowModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [alertType, setAlertType] = useState('success');
+  const [showAlert, setShowAlert] = useState(false);
 
   const [roleFormData, setRoleFormData] = useState({
     roleName: "",
@@ -42,15 +43,11 @@ export default function RolePermission() {
         .then((res) => res.json())
         .then((data) => {
           console.log("Permissions API response:", data);
-
-          // Your API returns { permissions: { student: [...], attendance: [...], grade: [...] } }
-          // So we need to store data.permissions directly
           if (data && data.permissions) {
             setPermissions(data.permissions);
           } else {
             setPermissions({});
           }
-
           setLoadingPermissions(false);
         })
         .catch((err) => {
@@ -115,17 +112,7 @@ export default function RolePermission() {
     }
   };
 
-  const menuItems = [
-    { id: 'overview', label: 'Overview', icon: '📊' },
-    { id: 'users', label: 'User Management', icon: '👥' },
-    { id: 'roles', label: 'Roles & Permissions', icon: '🔐' },
-    { id: 'classes', label: 'Classes & Sections', icon: '🏫' },
-    { id: 'students', label: 'Students', icon: '👨‍🎓' },
-    { id: 'teachers', label: 'Teachers', icon: '👩‍🏫' },
-    { id: 'courses', label: 'Courses', icon: '📚' },
-    { id: 'reports', label: 'Reports', icon: '📈' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' },
-  ];
+
 
 
   return (
@@ -146,15 +133,6 @@ export default function RolePermission() {
         </div>
 
 
-  {/* Alert Component */}
-      <Alert
-        type={alertType}
-        title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
-        message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
-        show={showAlert}
-        onClose={() => setShowAlert(false)}
-        autoClose={5000}
-      />
 
         {/* Predefined Roles */}
         <div className="mb-8">
@@ -303,7 +281,6 @@ export default function RolePermission() {
 
                     const data = await res.json();
 
-
                     if (res.ok && data.success) {
                       showTestAlert("success"); // aapka custom alert
                       setShowRoleModal(false);
@@ -332,10 +309,21 @@ export default function RolePermission() {
         </div>
       )}
       {/* Modal Create Role End */}
+
+
+
+
+      {/* Alert Component for showing alerts*/}
+      <Alert
+        type={alertType}
+        title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
+        message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
+        show={showAlert}
+        onClose={() => setShowAlert(false)}
+        autoClose={5000}
+      />
+
     </div>
-
-
-
 
   );
 }

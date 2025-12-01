@@ -9,8 +9,6 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertType, setAlertType] = useState('success');
   const [showModal, setShowModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showTeacherModal, setShowTeacherModal] = useState(false);
@@ -108,10 +106,7 @@ export default function AdminDashboard() {
     { id: 4, user: 'Michael Brown', action: 'Generated reports', time: '2 hours ago', icon: '📊', type: 'report' },
   ];
 
-  const showTestAlert = (type) => {
-    setAlertType(type);
-    setShowAlert(true);
-  };
+ 
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -1050,15 +1045,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Alert Component */}
-      <Alert
-        type={alertType}
-        title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
-        message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
-        show={showAlert}
-        onClose={() => setShowAlert(false)}
-        autoClose={5000}
-      />
+
 
       {/* Modal Component */}
       <Modal
