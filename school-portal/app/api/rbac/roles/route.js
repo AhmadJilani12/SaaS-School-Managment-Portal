@@ -1,16 +1,7 @@
-import mongoose from "mongoose";
+import { connectDB } from "../../../../lib/db.js";
 import Role from "../../../../models/Role";
 import Permission from "../../../../models/Permission";
 
-const MONGODB_URI = process.env.MONGODB_URI;
-const DATABASE_NAME = process.env.DATABASE_NAME;
-
-async function connectDB() {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(MONGODB_URI, { dbName: DATABASE_NAME });
-    console.log("📌 Connected to MongoDB (Roles API)");
-  }
-}
 
 export async function POST(req) {
   try {
