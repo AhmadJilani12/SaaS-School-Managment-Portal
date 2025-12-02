@@ -16,7 +16,7 @@ export default function RolePermission() {
     permissions: [],
   });
 
-    const showTestAlert = (type) => {
+    const triggerAlert  = (type) => {
     setAlertType(type);
     setShowAlert(true);
   };
@@ -108,7 +108,7 @@ const handleCreateRole = async () => {
     const data = await res.json();
 
     if (res.ok && data.success) {
-      showTestAlert("success");
+      triggerAlert ("success");
       setShowRoleModal(false);
 
       // Reset form
@@ -294,7 +294,7 @@ const handleCreateRole = async () => {
       <Alert
         type={alertType}
         title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
-        message={`Role is Created Successfully.`}
+        message={`Role is Created Successfully .`}
         show={showAlert}
         onClose={() => setShowAlert(false)}
         autoClose={5000}
