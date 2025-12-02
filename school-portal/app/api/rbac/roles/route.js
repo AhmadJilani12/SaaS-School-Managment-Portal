@@ -54,9 +54,9 @@ export async function GET(req) {
     await connectDB();
 
     // Fetch roles where isPredefined = false
-    const roles = await Role.find({ isPredefined: false })
-      .populate("permissions", "name description") // populate permissions with only name & description
-      .lean();
+const roles = await Role.find({ isPredefined: false })
+  .populate("permissions", "name label module description")
+  .lean();
 
     return new Response(
       JSON.stringify({ success: true, roles }),

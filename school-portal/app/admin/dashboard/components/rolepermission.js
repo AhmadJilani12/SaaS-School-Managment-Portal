@@ -18,7 +18,17 @@ const parseMongoError = (errorMessage) => {
   return errorMessage;
 };
 
+const groupPermissionsByModule = (permissions) => {
+  const grouped = {};
 
+  permissions.forEach((perm) => {
+    const moduleName = perm.module || "general"; // fallback
+    if (!grouped[moduleName]) grouped[moduleName] = [];
+    grouped[moduleName].push(perm);
+  });
+
+  return grouped;
+};
 export default function RolePermission() {
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState({});
@@ -28,7 +38,10 @@ export default function RolePermission() {
   const [alertType, setAlertType] = useState('success');
   const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
-
+  const [openMenu, setOpenMenu] = useState(null); // roleId for 3-dots menu
+  const [viewRole, setViewRole] = useState(null); // role being viewed
+  const [loadingPermissions, setLoadingPermissions] = useState(false);
+  
   const [roleFormData, setRoleFormData] = useState({
     roleName: "",
     roleDescription: "",
@@ -53,7 +66,6 @@ export default function RolePermission() {
     "border-teal-500",
   ];
 
-  const [loadingPermissions, setLoadingPermissions] = useState(false);
 
   useEffect(() => {
     if (showRoleModal) {
@@ -85,6 +97,7 @@ const loadData = async () => {
     const rolesData = await rolesRes.json();
 
     if (rolesData.success) {
+      console.log("Roles API response:", rolesData);
       setRoles(rolesData.roles || []);
     }
   } catch (err) {
@@ -110,7 +123,7 @@ const loadData = async () => {
   };
 
  
-  // Handle create role
+ // Handle create role
 const handleCreateRole = async () => {
   try {
     const res = await fetch("/api/rbac/roles", {
@@ -194,6 +207,9 @@ const handleCreateRole = async () => {
         </div>
 
 {/* Custom Roles */}
+
+{/* Custom Roles */}
+{/* Custom Roles */}
 <div>
   <h3 className="text-md font-semibold text-gray-900 mb-4">Custom Roles</h3>
 
@@ -209,21 +225,45 @@ const handleCreateRole = async () => {
         </div>
       ) : (
         roles.map((role) => (
-          <div key={role._id} className="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-lg">
+          <div
+            key={role._id}
+            className="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-lg relative"
+          >
+            {/* 3 dots menu */}
+            <div className="absolute top-3 right-3">
+              <button
+                onClick={() => setOpenMenu(openMenu === role._id ? null : role._id)}
+                className="p-2 hover:bg-blue-100 rounded-full"
+              >
+                ⋮
+              </button>
+
+              {openMenu === role._id && (
+                <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg border rounded-lg z-50">
+                  <button
+                    onClick={() => {
+                      setViewRole(role);
+                      setOpenMenu(null);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    View Permissions
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Role Info */}
             <h4 className="font-semibold text-gray-900">{role.name}</h4>
             <p className="text-sm text-gray-600 mt-1">{role.description}</p>
-            <p className="text-xs text-gray-500 mt-2">Permissions:</p>
-            <ul className="text-xs text-gray-700 list-disc ml-5 mt-1">
-              {role.permissions.map((perm) => (
-                <li key={perm._id}>{perm.name}</li>
-              ))}
-            </ul>
           </div>
         ))
       )}
     </div>
   )}
 </div>
+
+
 </div>
 
       {/* Modal Create Role Start */}
@@ -343,6 +383,34 @@ const handleCreateRole = async () => {
         onClose={() => setShowAlert(false)}
         autoClose={5000}
       />
+
+    {viewRole && (
+   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+      
+      <div className="flex justify-between items-center border-b pb-3">
+        <h2 className="text-lg font-bold">Permissions for {viewRole.name}</h2>
+        <button onClick={() => setViewRole(null)} className="text-gray-600 hover:text-black">
+          ✕
+        </button>
+      </div>
+
+      <div className="mt-4 space-y-4">
+        {Object.entries(groupPermissionsByModule(viewRole.permissions)).map(([module, perms]) => (
+          <div key={module} className="border-l-4 border-indigo-500 bg-gray-50 p-3 rounded-md">
+            <h3 className="font-semibold capitalize mb-1">{module}</h3>
+
+            <ul className="ml-5 list-disc text-sm text-gray-800">
+              {perms.map((perm) => (
+                <li key={perm._id}>{perm.label || perm.name}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
 
 
     </div>
