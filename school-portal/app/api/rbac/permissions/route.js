@@ -1,9 +1,6 @@
 import { connectDB } from "../../../../lib/db.js";
 import Permission from "../../../../models/Permission";
 
-
-
-
 export async function GET(req) {
   try {
     await connectDB();

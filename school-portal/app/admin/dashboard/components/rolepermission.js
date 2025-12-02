@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import Alert from "../../../../components/Alert.js";
 
-
-
 export default function RolePermission() {
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState({});
@@ -93,28 +91,39 @@ export default function RolePermission() {
     }));
   };
 
+ 
   // Handle create role
-  const handleCreateRole = async () => {
-    try {
-      const res = await fetch("/api/rbac/roles", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+const handleCreateRole = async () => {
+  try {
+    const res = await fetch("/api/rbac/roles", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        roleName: roleFormData.roleName,
+        roleDescription: roleFormData.roleDescription,
+        permissions: roleFormData.permissions,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      showTestAlert("success");
+      setShowRoleModal(false);
+
+      // Reset form
+      setRoleFormData({
+        roleName: "",
+        roleDescription: "",
+        permissions: [],
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        loadData();
-        setShowModal(false);
-        setFormData({ roleName: "", roleDescription: "", permissions: [] });
-      } else {
-        alert(data.error || "Error creating role");
-      }
-    } catch (err) {
-      alert("Request failed: " + err.message);
+    } else {
+      alert(data.error || "Error creating role");
     }
-  };
-
-
+  } catch (err) {
+    alert("Request failed: " + err.message);
+  }
+};
 
 
   return (
@@ -269,39 +278,7 @@ export default function RolePermission() {
                 Cancel
               </button>
               <button
-                onClick={async () => {
-                  try {
-                    const res = await fetch("/api/rbac/roles", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        roleName: roleFormData.roleName,
-                        roleDescription: roleFormData.roleDescription,
-                        permissions: roleFormData.permissions, // selected permission names
-                      }),
-                    });
-
-                    const data = await res.json();
-
-                    if (res.ok && data.success) {
-                      showTestAlert("success"); // aapka custom alert
-                      setShowRoleModal(false);
-
-                      // Reset form
-                      setRoleFormData({
-                        roleName: "",
-                        roleDescription: "",
-                        permissions: [],
-                      });
-                    } else {
-                      console.log("This is the data", data);
-                      alert("Error: " + data.error);
-                    }
-                  } catch (err) {
-                    console.log("This is the Error", err);
-                    alert("Request failed: " + err.message);
-                  }
-                }}
+                onClick={handleCreateRole}
                 className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
               >
                 Create Role
@@ -311,8 +288,6 @@ export default function RolePermission() {
         </div>
       )}
       {/* Modal Create Role End */}
-
-
 
 
       {/* Alert Component for showing alerts*/}
