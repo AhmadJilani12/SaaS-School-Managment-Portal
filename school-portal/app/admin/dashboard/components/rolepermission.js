@@ -127,7 +127,8 @@ const handleCreateRole = async () => {
     const data = await res.json();
 
     if (res.ok && data.success) {
-      triggerAlert ("success");
+    setAlertMessage("Role created successfully");
+    triggerAlert ("success");
       setShowRoleModal(false);
 
       // Reset form
@@ -137,7 +138,6 @@ const handleCreateRole = async () => {
         permissions: [],
       });
     } else {
-        console.log("Yes i am in the Else Block");
         const readable = parseMongoError(data.error || "Error creating role");
      
         setAlertMessage(readable);
@@ -145,7 +145,6 @@ const handleCreateRole = async () => {
 
     }
   } catch (err) {
-    console.log("Yes i am in the Catch Block");
      triggerAlert("error", "Request failed: " + err.message);
   }
 };
