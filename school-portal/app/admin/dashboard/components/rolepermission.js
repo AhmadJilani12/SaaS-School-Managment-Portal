@@ -1,6 +1,24 @@
 import { useEffect, useState } from "react";
 import Alert from "../../../../components/Alert.js";
 
+
+
+
+const parseMongoError = (errorMessage) => {
+  console.log("Original MongoDB Error Message:", errorMessage);
+  // Detect duplicate key error (11000)
+  if (errorMessage.includes("E11000") || errorMessage.includes("11000")) {
+    console.log("Duplicate Key Error Detected");
+    const match = errorMessage.match(/name:\s*"([^"]+)"/);
+
+    const roleName = match ? match[1] : "This role";
+    return `The role "${roleName}" already exists.`;
+  }
+
+  return errorMessage;
+};
+
+
 export default function RolePermission() {
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState({});
@@ -8,6 +26,7 @@ export default function RolePermission() {
   const [showModal, setShowModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [alertType, setAlertType] = useState('success');
+  const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
 
   const [roleFormData, setRoleFormData] = useState({
@@ -16,10 +35,11 @@ export default function RolePermission() {
     permissions: [],
   });
 
-    const triggerAlert  = (type) => {
+  const triggerAlert  = (type) => {
     setAlertType(type);
     setShowAlert(true);
   };
+
 
   {/* Permissions Section with dynamic border colors */ }
   const colors = [
@@ -41,8 +61,7 @@ export default function RolePermission() {
       fetch("/api/rbac/permissions")
         .then((res) => res.json())
         .then((data) => {
-          console.log("Yes i am inside the role and permission");
-          console.log("Permissions API response:", data);
+           console.log("Permissions API response:", data);
           if (data && data.permissions) {
             setPermissions(data.permissions);
           } else {
@@ -118,10 +137,16 @@ const handleCreateRole = async () => {
         permissions: [],
       });
     } else {
-      alert(data.error || "Error creating role");
+        console.log("Yes i am in the Else Block");
+        const readable = parseMongoError(data.error || "Error creating role");
+     
+        setAlertMessage(readable);
+        triggerAlert("error");
+
     }
   } catch (err) {
-    alert("Request failed: " + err.message);
+    console.log("Yes i am in the Catch Block");
+     triggerAlert("error", "Request failed: " + err.message);
   }
 };
 
@@ -294,13 +319,15 @@ const handleCreateRole = async () => {
       <Alert
         type={alertType}
         title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
-        message={`Role is Created Successfully .`}
+        message={`${alertMessage}.`}
         show={showAlert}
         onClose={() => setShowAlert(false)}
         autoClose={5000}
       />
 
+
     </div>
+
 
   );
 }
