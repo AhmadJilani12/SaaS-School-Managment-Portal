@@ -78,23 +78,22 @@ export default function RolePermission() {
   }, [showRoleModal]);
 
   // Load roles + permissions from API
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [rolesRes, permRes] = await Promise.all([
-        fetch("/api/rbac/roles"),
-        fetch("/api/rbac/modules"),
-      ]);
-      const rolesData = await rolesRes.json();
-      const permData = await permRes.json();
-      if (rolesData.success) setRoles(rolesData.roles || []);
-      if (permData.success) setPermissions(permData.modules || {});
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+const loadData = async () => {
+  try {
+    setLoading(true);
+    const rolesRes = await fetch("/api/rbac/roles");
+    const rolesData = await rolesRes.json();
+
+    if (rolesData.success) {
+      setRoles(rolesData.roles || []);
     }
-  };
+  } catch (err) {
+    console.error("Failed to load roles", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     loadData();
@@ -194,17 +193,38 @@ const handleCreateRole = async () => {
           </div>
         </div>
 
-        {/* Custom Roles */}
-        <div>
-          <h3 className="text-md font-semibold text-gray-900 mb-4">Custom Roles</h3>
-          <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-            <p className="text-gray-500">No custom roles created yet. Click "Create New Role" to add one.</p>
-          </div>
+{/* Custom Roles */}
+<div>
+  <h3 className="text-md font-semibold text-gray-900 mb-4">Custom Roles</h3>
+
+  {loading ? (
+    <div className="flex justify-center items-center py-10">
+      <div className="animate-spin rounded-full h-10 w-10 border-4 border-indigo-500 border-t-transparent"></div>
+    </div>
+  ) : (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {roles.length === 0 ? (
+        <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+          <p className="text-gray-500">No custom roles created yet.</p>
         </div>
-      </div>
-
-
-
+      ) : (
+        roles.map((role) => (
+          <div key={role._id} className="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-gray-900">{role.name}</h4>
+            <p className="text-sm text-gray-600 mt-1">{role.description}</p>
+            <p className="text-xs text-gray-500 mt-2">Permissions:</p>
+            <ul className="text-xs text-gray-700 list-disc ml-5 mt-1">
+              {role.permissions.map((perm) => (
+                <li key={perm._id}>{perm.name}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      )}
+    </div>
+  )}
+</div>
+</div>
 
       {/* Modal Create Role Start */}
       {showRoleModal && (
