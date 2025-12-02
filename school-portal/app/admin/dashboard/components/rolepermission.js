@@ -294,7 +294,7 @@ const handleCreateRole = async () => {
       <Alert
         type={alertType}
         title={`${alertType.charAt(0).toUpperCase() + alertType.slice(1)} Alert`}
-        message={`This is a test ${alertType} alert message. It will auto-close in 5 seconds.`}
+        message={`Role is Created Successfully.`}
         show={showAlert}
         onClose={() => setShowAlert(false)}
         autoClose={5000}
