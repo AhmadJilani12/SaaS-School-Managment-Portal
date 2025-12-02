@@ -26,6 +26,7 @@ export async function POST(req) {
       name: roleName,
       description: roleDescription || "",
       permissions: permissionIds,
+      isPredefined: false,
     });
 
     return new Response(
