@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import Alert from "../../../../components/Alert.js";
 
-
-
-
 const parseMongoError = (errorMessage) => {
   console.log("Original MongoDB Error Message:", errorMessage);
   // Detect duplicate key error (11000)
@@ -41,7 +38,7 @@ export default function RolePermission() {
   const [openMenu, setOpenMenu] = useState(null); // roleId for 3-dots menu
   const [viewRole, setViewRole] = useState(null); // role being viewed
   const [loadingPermissions, setLoadingPermissions] = useState(false);
-  
+
   const [roleFormData, setRoleFormData] = useState({
     roleName: "",
     roleDescription: "",
@@ -66,6 +63,17 @@ export default function RolePermission() {
     "border-teal-500",
   ];
 
+//bg colors array 
+  const bgColors = [
+  "bg-red-50",
+  "bg-green-50",
+  "bg-blue-50",
+  "bg-yellow-50",
+  "bg-purple-50",
+  "bg-pink-50",
+  "bg-indigo-50",
+  "bg-teal-50",
+];
 
   useEffect(() => {
     if (showRoleModal) {
@@ -207,9 +215,6 @@ const handleCreateRole = async () => {
         </div>
 
 {/* Custom Roles */}
-
-{/* Custom Roles */}
-{/* Custom Roles */}
 <div>
   <h3 className="text-md font-semibold text-gray-900 mb-4">Custom Roles</h3>
 
@@ -224,44 +229,55 @@ const handleCreateRole = async () => {
           <p className="text-gray-500">No custom roles created yet.</p>
         </div>
       ) : (
-        roles.map((role) => (
-          <div
-            key={role._id}
-            className="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-lg relative"
-          >
-            {/* 3 dots menu */}
-            <div className="absolute top-3 right-3">
-              <button
-                onClick={() => setOpenMenu(openMenu === role._id ? null : role._id)}
-                className="p-2 hover:bg-blue-100 rounded-full"
-              >
-                ⋮
-              </button>
+  
+        roles.map((role, index) => {
+  const borderColor = colors[index % colors.length];
+  const bgColor = bgColors[index % bgColors.length];
 
-              {openMenu === role._id && (
-                <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg border rounded-lg z-50">
-                  <button
-                    onClick={() => {
-                      setViewRole(role);
-                      setOpenMenu(null);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                    View Permissions
-                  </button>
-                </div>
-              )}
-            </div>
+  return (
+    <div
+      key={role._id}
+      className={`p-4 rounded-lg relative border-l-4 ${borderColor} ${bgColor}`}
+    >
+      {/* 3 dots menu */}
+      <div className="absolute top-3 right-3">
+        <button
+          onClick={() => setOpenMenu(openMenu === role._id ? null : role._id)}
+          className="p-2 hover:bg-gray-100 rounded-full"
+        >
+          ⋮
+        </button>
 
-            {/* Role Info */}
-            <h4 className="font-semibold text-gray-900">{role.name}</h4>
-            <p className="text-sm text-gray-600 mt-1">{role.description}</p>
+        {openMenu === role._id && (
+          <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg border rounded-lg z-50">
+            <button
+              onClick={() => {
+                setViewRole(role);
+                setOpenMenu(null);
+              }}
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+            >
+              View Permissions
+            </button>
           </div>
-        ))
+        )}
+      </div>
+
+      {/* Role Info */}
+      <h4 className="font-semibold text-gray-900">{role.name}</h4>
+      <p className="text-sm text-gray-600 mt-1">{role.description}</p>
+      <p className="text-xs text-gray-500 mt-2">0 Users assigned</p>
+    </div>
+  );
+})
+
+
       )}
     </div>
   )}
 </div>
+
+
 
 
 </div>
@@ -384,33 +400,68 @@ const handleCreateRole = async () => {
         autoClose={5000}
       />
 
-    {viewRole && (
-   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
-      
-      <div className="flex justify-between items-center border-b pb-3">
-        <h2 className="text-lg font-bold">Permissions for {viewRole.name}</h2>
-        <button onClick={() => setViewRole(null)} className="text-gray-600 hover:text-black">
+
+{/* View Permissions */}
+{viewRole && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+
+      {/* Header */}
+      <div className="sticky top-0 bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 flex items-center justify-between rounded-t-xl shadow-md z-10">
+        <h2 className="text-lg font-bold text-white">Permissions for {viewRole.name}</h2>
+        <button
+          onClick={() => setViewRole(null)}
+          className="text-white hover:bg-white/20 p-2 rounded-full transition-colors"
+        >
           ✕
         </button>
       </div>
 
-      <div className="mt-4 space-y-4">
-        {Object.entries(groupPermissionsByModule(viewRole.permissions)).map(([module, perms]) => (
-          <div key={module} className="border-l-4 border-indigo-500 bg-gray-50 p-3 rounded-md">
-            <h3 className="font-semibold capitalize mb-1">{module}</h3>
+      {/* Content */}
+      <div className="p-6 space-y-4">
+        {(() => {
+          // Define module colors
+          const moduleColors = ['indigo', 'purple', 'pink', 'green', 'orange', 'blue', 'teal'];
 
-            <ul className="ml-5 list-disc text-sm text-gray-800">
-              {perms.map((perm) => (
-                <li key={perm._id}>{perm.label || perm.name}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
+          return Object.entries(groupPermissionsByModule(viewRole.permissions)).map(([module, perms], idx) => {
+            const color = moduleColors[idx % moduleColors.length]; // pick color based on index
+
+            return (
+              <div
+                key={module}
+                className={`border-l-4 rounded-lg shadow-sm transition-shadow bg-${color}-50 border-${color}-500`}
+              >
+                <h3 className={`font-semibold capitalize text-gray-900 mb-2 px-4 py-2`}>{module}</h3>
+                <ul className="ml-5 pr-4 pb-2 space-y-1">
+                  {perms.map((perm) => (
+                    <li
+                      key={perm._id}
+                      className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+                    >
+                      <span className={`text-${color}-600 font-bold`}>➤</span>
+                      <span className="text-gray-800">{perm.label || perm.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          });
+        })()}
+      </div>
+
+      {/* Footer */}
+      <div className="sticky bottom-0 bg-gray-100 px-6 py-3 flex justify-end rounded-b-xl border-t">
+        <button
+          onClick={() => setViewRole(null)}
+          className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+        >
+          Close
+        </button>
       </div>
     </div>
   </div>
 )}
+
 
 
     </div>
