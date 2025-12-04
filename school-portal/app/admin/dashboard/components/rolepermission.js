@@ -174,6 +174,7 @@ const handleCreateRole = async (flagWithoutPermission = false) => {
         roleDescription: "",
         permissions: [],
       });
+      loadData();
     } else {
       setAlertMessage(parseMongoError(data.error || "Error creating role"));
       triggerAlert("error");
