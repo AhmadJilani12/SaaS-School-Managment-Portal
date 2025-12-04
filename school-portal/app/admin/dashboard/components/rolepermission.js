@@ -203,8 +203,6 @@ const handleCreateRole = async (flagWithoutPermission = false) => {
           </button>
         </div>
 
-
-
         {/* Predefined Roles */}
         <div className="mb-8">
           <h3 className="text-md font-semibold text-gray-900 mb-4">Predefined Roles</h3>
