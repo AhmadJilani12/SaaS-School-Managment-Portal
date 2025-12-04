@@ -467,36 +467,55 @@ const handleCreateRole = async (flagWithoutPermission = false) => {
       </div>
 
       {/* Content */}
-      <div className="p-6 space-y-4">
-        {(() => {
-          // Define module colors
-          const moduleColors = ['indigo', 'purple', 'pink', 'green', 'orange', 'blue', 'teal'];
+<div className="p-6 space-y-4">
+  {(() => {
+    const grouped = groupPermissionsByModule(viewRole.permissions);
 
-          return Object.entries(groupPermissionsByModule(viewRole.permissions)).map(([module, perms], idx) => {
-            const color = moduleColors[idx % moduleColors.length]; // pick color based on index
+    // If no permissions at all
+    if (
+      !viewRole.permissions ||
+      viewRole.permissions.length === 0 ||
+      Object.keys(grouped).length === 0
+    ) {
+      return (
+        <div className="text-center py-6 text-gray-600 font-medium">
+  <b>No permissions assigned to this role. 😕</b>
+</div>
+      );
+    }
 
-            return (
-              <div
-                key={module}
-                className={`border-l-4 rounded-lg shadow-sm transition-shadow bg-${color}-50 border-${color}-500`}
+    // Module colors
+    const moduleColors = ['indigo', 'purple', 'pink', 'green', 'orange', 'blue', 'teal'];
+
+    return Object.entries(grouped).map(([module, perms], idx) => {
+      const color = moduleColors[idx % moduleColors.length];
+
+      return (
+        <div
+          key={module}
+          className={`border-l-4 rounded-lg shadow-sm transition-shadow bg-${color}-50 border-${color}-500`}
+        >
+          <h3 className="font-semibold capitalize text-gray-900 mb-2 px-4 py-2">
+            {module}
+          </h3>
+
+          <ul className="ml-5 pr-4 pb-2 space-y-1">
+            {perms.map((perm) => (
+              <li
+                key={perm._id}
+                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
               >
-                <h3 className={`font-semibold capitalize text-gray-900 mb-2 px-4 py-2`}>{module}</h3>
-                <ul className="ml-5 pr-4 pb-2 space-y-1">
-                  {perms.map((perm) => (
-                    <li
-                      key={perm._id}
-                      className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
-                    >
-                      <span className={`text-${color}-600 font-bold`}>➤</span>
-                      <span className="text-gray-800">{perm.label || perm.name}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          });
-        })()}
-      </div>
+                <span className={`text-${color}-600 font-bold`}>➤</span>
+                <span className="text-gray-800">{perm.label || perm.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    });
+  })()}
+</div>
+
 
       {/* Footer */}
       <div className="sticky bottom-0 bg-gray-100 px-6 py-3 flex justify-end rounded-b-xl border-t">
