@@ -44,11 +44,8 @@ export default function AdminDashboard() {
 
   // Form states for classes
   const [showClassModal, setShowClassModal] = useState(false);
-  const [classFormData, setClassFormData] = useState({
-    className: '',
-    sections: '',
-    classTeacher: ''
-  });
+
+  
 
   // Section view state
   const [selectedClass, setSelectedClass] = useState(null);

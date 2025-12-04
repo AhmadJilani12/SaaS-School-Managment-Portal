@@ -38,6 +38,8 @@ export default function RolePermission() {
   const [openMenu, setOpenMenu] = useState(null); // roleId for 3-dots menu
   const [viewRole, setViewRole] = useState(null); // role being viewed
   const [loadingPermissions, setLoadingPermissions] = useState(false);
+  const [showPermissionWarning, setShowPermissionWarning] = useState(false);
+  const [roleNameError, setRoleNameError] = useState("");
 
   const [roleFormData, setRoleFormData] = useState({
     roleName: "",
@@ -132,42 +134,55 @@ const loadData = async () => {
 
  
  // Handle create role
-const handleCreateRole = async () => {
+const handleCreateRole = async (flagWithoutPermission = false) => {
   try {
+    if (!roleFormData.roleName.trim()) {
+      setRoleNameError("Role Name is required");
+      return;
+    }
+
+    const selectedPermissions = (roleFormData.permissions || []).filter(
+      p => p && p.trim()
+    );
+
+    console.log("This is the flag without permission value", flagWithoutPermission , '  '  ,selectedPermissions.length);
+    if (selectedPermissions.length == 0 && !flagWithoutPermission) {
+      setShowPermissionWarning(true);
+      return;
+    }
+
+    console.log("This is the Role Form Data" , roleFormData.roleName , roleFormData.roleDescription, selectedPermissions);
     const res = await fetch("/api/rbac/roles", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         roleName: roleFormData.roleName,
         roleDescription: roleFormData.roleDescription,
-        permissions: roleFormData.permissions,
+        permissions: selectedPermissions,
       }),
     });
 
     const data = await res.json();
 
     if (res.ok && data.success) {
-    setAlertMessage("Role created successfully");
-    triggerAlert ("success");
+      setAlertMessage("Role created successfully");
+      triggerAlert("success");
       setShowRoleModal(false);
 
-      // Reset form
       setRoleFormData({
         roleName: "",
         roleDescription: "",
         permissions: [],
       });
     } else {
-        const readable = parseMongoError(data.error || "Error creating role");
-     
-        setAlertMessage(readable);
-        triggerAlert("error");
-
+      setAlertMessage(parseMongoError(data.error || "Error creating role"));
+      triggerAlert("error");
     }
   } catch (err) {
-     triggerAlert("error", "Request failed: " + err.message);
+    triggerAlert("error", "Request failed: " + err.message);
   }
 };
+
 
 
   return (
@@ -305,10 +320,14 @@ const handleCreateRole = async () => {
                 <input
                   type="text"
                   value={roleFormData.roleName}
-                  onChange={(e) => setRoleFormData({ ...roleFormData, roleName: e.target.value })}
+                     onChange={(e) => {
+      setRoleFormData({ ...roleFormData, roleName: e.target.value });
+      if (roleNameError) setRoleNameError(""); // Error clear kar do jaise hi type kare
+    }}
                   placeholder="e.g., Department Head, Accountant"
                   className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
                 />
+                  {roleNameError && <p className="text-red-500 text-sm mt-1">{roleNameError}</p>}
               </div>
 
               {/* Role Description */}
@@ -378,7 +397,7 @@ const handleCreateRole = async () => {
                 Cancel
               </button>
               <button
-                onClick={handleCreateRole}
+              onClick={() => handleCreateRole(false)}
                 className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
               >
                 Create Role
@@ -399,6 +418,36 @@ const handleCreateRole = async () => {
         onClose={() => setShowAlert(false)}
         autoClose={5000}
       />
+
+
+      {/* Show Permission warning Modal*/}
+{showPermissionWarning && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 space-y-4">
+      <h3 className="text-lg font-bold text-yellow-800">⚠ No Permissions Selected</h3>
+      <p className="text-gray-700">
+        You are creating the role without any permissions. You can edit permissions later.
+      </p>
+      <div className="flex justify-end space-x-3">
+        <button
+          onClick={() => setShowPermissionWarning(false)}
+          className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 font-semibold"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => {
+            handleCreateRole(true); // Proceed anyway
+            setShowPermissionWarning(false);
+            }}
+          className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded hover:shadow-lg font-semibold"
+        >
+          Proceed
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
 
 {/* View Permissions */}
@@ -461,8 +510,6 @@ const handleCreateRole = async () => {
     </div>
   </div>
 )}
-
-
 
     </div>
 
