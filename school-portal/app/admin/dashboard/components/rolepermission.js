@@ -126,9 +126,40 @@ const loadData = async () => {
 };
 
 
+
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+  // Run when Settings Modal opens
+  if (settingRole) {
+    loadPermissions(); 
+  }
+}, [settingRole]);
+
+
+
+const loadPermissions = () => {
+  setLoadingPermissions(true);
+  
+  fetch("/api/rbac/permissions")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data && data.permissions) {
+        setPermissions(data.permissions);
+      } else {
+        setPermissions({});
+      }
+      setLoadingPermissions(false);
+    })
+    .catch((err) => {
+      console.error("Failed to load permissions", err);
+      setPermissions({});
+      setLoadingPermissions(false);
+    });
+};
+
 
   // Toggle permission in form
   const togglePermission = (permName) => {
@@ -600,7 +631,7 @@ const handleUpdateRole = async (roleId, data) => {
 
         {/* Role Name */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 mb-2">Role Name *</label>
+          <label className="block text-base font-semibold text-gray-900 mb-2">Role Name *</label>
           <input
             type="text"
             value={editFormData.roleName}
@@ -611,7 +642,7 @@ const handleUpdateRole = async (roleId, data) => {
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-semibold text-gray-900 mb-2">Description</label>
+          <label className="block text-base font-semibold text-gray-900 mb-2">Description</label>
           <textarea
             rows={3}
             value={editFormData.roleDescription}
@@ -624,7 +655,7 @@ const handleUpdateRole = async (roleId, data) => {
 
         {/* Active / Inactive Toggle */}
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-gray-900">Status</span>
+          <span className="text-base font-semibold text-gray-900">Status</span>
 
           <label className="flex items-center cursor-pointer">
             <div className="relative">
@@ -657,50 +688,50 @@ const handleUpdateRole = async (roleId, data) => {
         {/* Permissions Section */}
         <h3 className="text-lg font-bold text-gray-900">Permissions</h3>
 
-        {loadingPermissions ? (
-          <div className="flex justify-center py-10">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
-          </div>
-        ) : (
-          permissions &&
-          Object.entries(permissions).map(([module, perms], index) => {
-            const borderColor = colors[index % colors.length];
+{loadingPermissions ? (
+  <div className="flex justify-center py-10">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+  </div>
+) : (
+  Object.entries(permissions || {}).map(([module, perms], index) => {
+    const borderColor = colors[index % colors.length];
 
-            return (
-              <div
-                key={module}
-                className={`border-l-4 ${borderColor} pl-4 mb-4 bg-gray-50 p-3 rounded-md`}
-              >
-                <h4 className="font-semibold mb-2 capitalize">{module}</h4>
+    return (
+      <div
+        key={module}
+        className={`border-l-4 ${borderColor} pl-4 mb-4 bg-gray-50 p-3 rounded-md`}
+      >
+        <h4 className="font-semibold mb-2 capitalize">{module}</h4>
 
-                {(Array.isArray(perms) ? perms : []).map((perm) => (
-                  <label
-                    key={perm.name}
-                    className="flex items-center space-x-3 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      value={perm.name}
-                      checked={editFormData.permissions.includes(perm.name)}
-                      onChange={(e) => {
-                        const updatedList = e.target.checked
-                          ? [...editFormData.permissions, perm.name]
-                          : editFormData.permissions.filter((p) => p !== perm.name);
+        {(Array.isArray(perms) ? perms : []).map((perm) => (
+          <label key={perm.name} className="flex items-center space-x-3 cursor-pointer">
+            <input
+              type="checkbox"
+              value={perm.name}
+              checked={editFormData.permissions.includes(perm.name)}
+              onChange={(e) => {
+                let updated;
 
-                        setEditFormData({
-                          ...editFormData,
-                          permissions: updatedList,
-                        });
-                      }}
-                      className="w-5 h-5 text-gray-800"
-                    />
-                    <span className="text-sm">{perm.label}</span>
-                  </label>
-                ))}
-              </div>
-            );
-          })
-        )}
+                if (e.target.checked) {
+                  updated = [...editFormData.permissions, perm.name];
+                } else {
+                  updated = editFormData.permissions.filter((p) => p !== perm.name);
+                }
+
+                setEditFormData({
+                  ...editFormData,
+                  permissions: updated,
+                });
+              }}
+              className="w-5 h-5 text-gray-800"
+            />
+            <span className="text-sm">{perm.label}</span>
+          </label>
+        ))}
+      </div>
+    );
+  })
+)}
       </div>
 
       {/* Footer */}
