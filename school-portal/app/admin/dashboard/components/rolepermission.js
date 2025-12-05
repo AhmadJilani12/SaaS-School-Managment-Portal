@@ -40,6 +40,7 @@ export default function RolePermission() {
   const [loadingPermissions, setLoadingPermissions] = useState(false);
   const [showPermissionWarning, setShowPermissionWarning] = useState(false);
   const [roleNameError, setRoleNameError] = useState("");
+  const [settingRole, setSetingRole] = useState(null);
 
   const [roleFormData, setRoleFormData] = useState({
     roleName: "",
@@ -273,6 +274,17 @@ const handleCreateRole = async (flagWithoutPermission = false) => {
             >
               View Permissions
             </button>
+
+            {/* Edit Permissions */}
+    <button
+      onClick={() => {
+        setSetingRole(role);   // <-- Create this state to manage edit modal
+        setOpenMenu(null);
+      }}
+      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+    >
+      Settings
+    </button>
           </div>
         )}
       </div>
