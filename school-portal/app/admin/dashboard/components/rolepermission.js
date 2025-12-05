@@ -40,13 +40,20 @@ export default function RolePermission() {
   const [loadingPermissions, setLoadingPermissions] = useState(false);
   const [showPermissionWarning, setShowPermissionWarning] = useState(false);
   const [roleNameError, setRoleNameError] = useState("");
-  const [settingRole, setSetingRole] = useState(null);
+  const [settingRole, setSettingRole] = useState(null);
 
   const [roleFormData, setRoleFormData] = useState({
     roleName: "",
     roleDescription: "",
     permissions: [],
   });
+
+  const [editFormData, setEditFormData] = useState({
+  roleName: "",
+  roleDescription: "",
+  permissions: [],
+  isActive: true,
+});
 
   const triggerAlert  = (type) => {
     setAlertType(type);
@@ -134,7 +141,7 @@ const loadData = async () => {
   };
 
  
- // Handle create role
+// Handle create role
 const handleCreateRole = async (flagWithoutPermission = false) => {
   try {
     if (!roleFormData.roleName.trim()) {
@@ -184,6 +191,25 @@ const handleCreateRole = async (flagWithoutPermission = false) => {
     triggerAlert("error", "Request failed: " + err.message);
   }
 };
+
+//handle update role 
+const handleUpdateRole = async (roleId, data) => {
+  try {
+    const res = await axios.put(`/api/roles/${roleId}`, data);
+
+    setAlertType("success");
+    setAlertMessage("Role updated successfully");
+    setShowAlert(true);
+
+    setSettingRole(null);
+    fetchRoles(); // refresh list
+  } catch (error) {
+    setAlertType("error");
+    setAlertMessage("Failed to update role");
+    setShowAlert(true);
+  }
+};
+
 
 
 
@@ -276,15 +302,25 @@ const handleCreateRole = async (flagWithoutPermission = false) => {
             </button>
 
             {/* Edit Permissions */}
-    <button
-      onClick={() => {
-        setSetingRole(role);   // <-- Create this state to manage edit modal
-        setOpenMenu(null);
-      }}
-      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-    >
-      Settings
-    </button>
+
+<button
+  onClick={() => {
+    setSettingRole(role);
+
+    setEditFormData({
+      roleName: role.name,
+      roleDescription: role.description,
+      permissions: role.permissions || [],
+      isActive: role.isActive ?? true,
+    });
+
+    setOpenMenu(null);
+  }}
+  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+>
+  Settings
+</button>
+
           </div>
         )}
       </div>
@@ -540,6 +576,153 @@ const handleCreateRole = async (flagWithoutPermission = false) => {
     </div>
   </div>
 )}
+
+
+
+{/* Settings / edit Role Modal */}
+{settingRole && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+
+      {/* Header */}
+      <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between">
+        <h2 className="text-xl font-bold text-white">Edit Role Settings</h2>
+        <button
+          onClick={() => setSettingRole(null)}
+          className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="p-6 space-y-6">
+
+        {/* Role Name */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">Role Name *</label>
+          <input
+            type="text"
+            value={editFormData.roleName}
+            onChange={(e) => setEditFormData({ ...editFormData, roleName: e.target.value })}
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+          />
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">Description</label>
+          <textarea
+            rows={3}
+            value={editFormData.roleDescription}
+            onChange={(e) =>
+              setEditFormData({ ...editFormData, roleDescription: e.target.value })
+            }
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+          ></textarea>
+        </div>
+
+        {/* Active / Inactive Toggle */}
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-semibold text-gray-900">Status</span>
+
+          <label className="flex items-center cursor-pointer">
+            <div className="relative">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={editFormData.isActive}
+                onChange={() =>
+                  setEditFormData({
+                    ...editFormData,
+                    isActive: !editFormData.isActive,
+                  })
+                }
+              />
+              <div className={`block w-14 h-7 rounded-full transition 
+                ${editFormData.isActive ? "bg-green-500" : "bg-gray-400"}`}></div>
+
+              <div
+                className={`dot absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition 
+                ${editFormData.isActive ? "translate-x-7" : ""}`}
+              ></div>
+            </div>
+
+            <span className="ml-3 text-sm font-medium">
+              {editFormData.isActive ? "Active" : "Inactive"}
+            </span>
+          </label>
+        </div>
+
+        {/* Permissions Section */}
+        <h3 className="text-lg font-bold text-gray-900">Permissions</h3>
+
+        {loadingPermissions ? (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+          </div>
+        ) : (
+          permissions &&
+          Object.entries(permissions).map(([module, perms], index) => {
+            const borderColor = colors[index % colors.length];
+
+            return (
+              <div
+                key={module}
+                className={`border-l-4 ${borderColor} pl-4 mb-4 bg-gray-50 p-3 rounded-md`}
+              >
+                <h4 className="font-semibold mb-2 capitalize">{module}</h4>
+
+                {(Array.isArray(perms) ? perms : []).map((perm) => (
+                  <label
+                    key={perm.name}
+                    className="flex items-center space-x-3 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      value={perm.name}
+                      checked={editFormData.permissions.includes(perm.name)}
+                      onChange={(e) => {
+                        const updatedList = e.target.checked
+                          ? [...editFormData.permissions, perm.name]
+                          : editFormData.permissions.filter((p) => p !== perm.name);
+
+                        setEditFormData({
+                          ...editFormData,
+                          permissions: updatedList,
+                        });
+                      }}
+                      className="w-5 h-5 text-gray-800"
+                    />
+                    <span className="text-sm">{perm.label}</span>
+                  </label>
+                ))}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex justify-end space-x-3 border-t">
+        <button
+          onClick={() => setSettingRole(null)}
+          className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 font-semibold"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => handleUpdateRole(settingRole._id, editFormData)}
+          className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg font-semibold"
+        >
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
     </div>
 
