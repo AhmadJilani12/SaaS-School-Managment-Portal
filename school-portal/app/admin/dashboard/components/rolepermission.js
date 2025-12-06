@@ -132,9 +132,15 @@ const loadData = async () => {
   }, []);
 
   useEffect(() => {
+  // This will run whenever editFormData changes
+  console.log("Updated editFormData:", editFormData);
+}, [editFormData]);
+
+  useEffect(() => {
   // Run when Settings Modal opens
   if (settingRole) {
     loadPermissions(); 
+  
   }
 }, [settingRole]);
 
@@ -241,9 +247,6 @@ const handleUpdateRole = async (roleId, data) => {
   }
 };
 
-
-
-
   return (
     <div className="p-6 space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -337,14 +340,18 @@ const handleUpdateRole = async (roleId, data) => {
 <button
   onClick={() => {
     setSettingRole(role);
+  setEditFormData({
+  roleName: role.name,
+  roleDescription: role.description,
+  permissions: Array.isArray(role.permissions)
+    ? role.permissions.map(p => p.name)
+    : Object.values(role.permissions || {})
+        .flat()
+        .map(p => p.name),
+  isActive: role.isActive ?? true,
+});
 
-    setEditFormData({
-      roleName: role.name,
-      roleDescription: role.description,
-      permissions: role.permissions || [],
-      isActive: role.isActive ?? true,
-    });
-
+console.log("Permissions", setEditFormData.permissions);
     setOpenMenu(null);
   }}
   className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
@@ -442,7 +449,7 @@ const handleUpdateRole = async (roleId, data) => {
                       <h4 className="font-semibold mb-2 capitalize">{moduleName}</h4>
                       <div className="space-y-2">
                         {(Array.isArray(perms) ? perms : []).map((perm) => (
-                          <label key={perm.name} className="flex items-center space-x-3 cursor-pointer">
+                          <label key={perm.name} className="flex items-center space-x-3 cursor-pointer mt-2">
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-gray-800 rounded focus:ring-2 focus:ring-gray-400"
@@ -704,7 +711,7 @@ const handleUpdateRole = async (roleId, data) => {
         <h4 className="font-semibold mb-2 capitalize">{module}</h4>
 
         {(Array.isArray(perms) ? perms : []).map((perm) => (
-          <label key={perm.name} className="flex items-center space-x-3 cursor-pointer">
+          <label key={perm.name} className="flex items-center space-x-3 cursor-pointer mt-2">
             <input
               type="checkbox"
               value={perm.name}
