@@ -229,23 +229,54 @@ const handleCreateRole = async (flagWithoutPermission = false) => {
   }
 };
 
-//handle update role 
-const handleUpdateRole = async (roleId, data) => {
+// Handle Update Role
+const handleUpdateRole = async () => {
   try {
-    const res = await axios.put(`/api/roles/${roleId}`, data);
+    if (!settingRole?._id) {
+      setAlertType("error");
+      setAlertMessage("No role selected for update");
+      setShowAlert(true);
+      return;
+    }
+
+    const payload = {
+      roleId: settingRole._id,
+      roleName: editFormData.roleName,
+      roleDescription: editFormData.roleDescription,
+      permissions: editFormData.permissions,  // array of names
+     };
+
+    console.log("📤 Update Payload:", payload);
+
+    const res = await fetch("/api/rbac/roles", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to update role");
+    }
 
     setAlertType("success");
     setAlertMessage("Role updated successfully");
     setShowAlert(true);
 
-    setSettingRole(null);
-    fetchRoles(); // refresh list
+    setSettingRole(null); // close modal
+    setEditFormData(null); // reset form
+
+    loadData(); // refresh updated roles
   } catch (error) {
+    console.error("❌ Update Error:", error);
+
     setAlertType("error");
-    setAlertMessage("Failed to update role");
+    setAlertMessage(error.message || "Failed to update role");
     setShowAlert(true);
   }
 };
+
 
   return (
     <div className="p-6 space-y-6">

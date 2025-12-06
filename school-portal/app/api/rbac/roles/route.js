@@ -70,3 +70,75 @@ const roles = await Role.find({ isPredefined: false })
     );
   }
 }
+
+
+
+// for updating existing role
+export async function PUT(req) {
+  try {
+    await connectDB();
+
+    const { roleId, roleName, roleDescription, permissions } = await req.json();
+
+    console.log("🛠️ Role Update Payload:", {
+      roleId,
+      roleName,
+      roleDescription,
+      permissions
+    });
+
+    if (!roleId) {
+      return new Response(JSON.stringify({ error: "Role ID is required" }), {
+        status: 400,
+      });
+    }
+
+    if (!roleName?.trim()) {
+      return new Response(JSON.stringify({ error: "Role name is required" }), {
+        status: 400,
+      });
+    }
+
+    // Convert permission names → permission IDs
+    const permissionDocs = await Permission.find({
+      name: { $in: permissions },
+    }).select("_id");
+
+    const permissionIds = permissionDocs.map((p) => p._id);
+
+    // Update role (only if it is not predefined)
+    const updatedRole = await Role.findOneAndUpdate(
+      { _id: roleId, isPredefined: false },
+      {
+        name: roleName,
+        description: roleDescription || "",
+        permissions: permissionIds
+      },
+      { new: true }
+    )
+      .populate("permissions", "name label module description")
+      .lean();
+
+    if (!updatedRole) {
+      return new Response(JSON.stringify({ error: "Role not found or cannot update predefined roles" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        role: updatedRole,
+      }),
+      { status: 200 }
+    );
+
+  } catch (error) {
+    console.error("❌ Role Update Error:", error);
+
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500 }
+    );
+  }
+}
