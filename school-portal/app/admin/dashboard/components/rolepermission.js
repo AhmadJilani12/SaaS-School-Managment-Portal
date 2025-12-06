@@ -623,7 +623,7 @@ console.log("Permissions", setEditFormData.permissions);
     <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
 
       {/* Header */}
-      <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between">
+      <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between z-50">
         <h2 className="text-xl font-bold text-white">Edit Role Settings</h2>
         <button
           onClick={() => setSettingRole(null)}
