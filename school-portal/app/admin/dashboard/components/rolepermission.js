@@ -521,7 +521,6 @@ console.log("Permissions", setEditFormData.permissions);
       )}
       {/* Modal Create Role End */}
 
-
       {/* Alert Component for showing alerts*/}
       <Alert
         type={alertType}
@@ -531,7 +530,6 @@ console.log("Permissions", setEditFormData.permissions);
         onClose={() => setShowAlert(false)}
         autoClose={5000}
       />
-
 
       {/* Show Permission warning Modal*/}
 {showPermissionWarning && (
@@ -561,7 +559,6 @@ console.log("Permissions", setEditFormData.permissions);
     </div>
   </div>
 )}
-
 
 {/* View Permissions */}
 {viewRole && (
@@ -642,8 +639,6 @@ console.log("Permissions", setEditFormData.permissions);
     </div>
   </div>
 )}
-
-
 
 {/* Settings / edit Role Modal */}
 {settingRole && (
