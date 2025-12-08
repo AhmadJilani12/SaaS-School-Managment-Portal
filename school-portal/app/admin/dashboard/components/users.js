@@ -10,6 +10,7 @@ export default function Users() {
   const [alertType, setAlertType] = useState("success");
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [roles, setRoles] = useState([]); // <-- for dynamic roles
 
   const [userFormData, setUserFormData] = useState({
     name: "",
@@ -52,9 +53,27 @@ export default function Users() {
     }
   };
 
+  
+  // Fetch dynamic roles from API
+  const loadRoles = async () => {
+    try {
+      const res = await fetch("/api/rbac/roles");
+      const data = await res.json();
+      if (data.success) {
+        setRoles(data.roles);
+      } else {
+        triggerAlert("error", "Failed to load roles");
+      }
+    } catch (err) {
+      triggerAlert("error", "Failed to load roles");
+    }
+  };
+
   useEffect(() => {
     loadUsers();
+    loadRoles();
   }, []);
+
 
   const handleCreateUser = () => {
     if (!userFormData.name.trim() || !userFormData.email.trim()) {
@@ -222,6 +241,7 @@ export default function Users() {
       </div>
 
       {/* Create User Modal */}
+       {/* Create User Modal */}
       {showUserModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 mt-0">
           <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -266,9 +286,9 @@ export default function Users() {
                   className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
                 >
                   <option value="">Select role</option>
-                  {ROLES.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
+                  {roles.map((role) => (
+                    <option key={role._id} value={role.name}>
+                      {role.name}
                     </option>
                   ))}
                 </select>
