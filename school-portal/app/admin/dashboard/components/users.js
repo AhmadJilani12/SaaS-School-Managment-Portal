@@ -241,77 +241,126 @@ export default function Users() {
       </div>
 
       {/* Create User Modal */}
-       {/* Create User Modal */}
-      {showUserModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 mt-0">
-          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Create New User</h2>
-              <button
-                onClick={() => setShowUserModal(false)}
-                className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
-              >
-                ✕
-              </button>
-            </div>
+ {showUserModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 mt-0">
+    <div className="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      {/* Modal Header */}
+      <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between">
+        <h2 className="text-xl font-bold text-white">Create New User</h2>
+        <button
+          onClick={() => setShowUserModal(false)}
+          className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+        >
+          ✕
+        </button>
+      </div>
 
-            <div className="p-6 space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Name *</label>
+      {/* Modal Body */}
+      <div className="p-6 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-900 mb-2">Name *</label>
+            <input
+              type="text"
+              value={userFormData.name}
+              onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
+              placeholder="Enter full name"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-900 mb-2">Email *</label>
+            <input
+              type="email"
+              value={userFormData.email}
+              onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
+              placeholder="Enter email address"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+            />
+          </div>
+
+          {/* Role */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-900 mb-2">Role</label>
+            <select
+              value={userFormData.role}
+              onChange={(e) => setUserFormData({ ...userFormData, role: e.target.value })}
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+            >
+              <option value="">Select role</option>
+              {roles.map((role) => (
+                <option key={role._id} value={role.name}>
+                  {role.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Password Option */}
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-sm font-semibold text-gray-900 mb-2">Password Option</label>
+            <div className="flex flex-col space-y-2">
+              <label className="flex items-center space-x-2">
                 <input
-                  type="text"
-                  value={userFormData.name}
-                  onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
-                  placeholder="Enter full name"
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                  type="radio"
+                  name="passwordOption"
+                  value="custom"
+                  checked={userFormData.passwordOption === "custom"}
+                  onChange={(e) => setUserFormData({ ...userFormData, passwordOption: e.target.value })}
+                  className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                 />
-              </div>
+                <span>Set Custom Password</span>
+              </label>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Email *</label>
+              <label className="flex items-center space-x-2">
                 <input
-                  type="email"
-                  value={userFormData.email}
-                  onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
-                  placeholder="Enter email address"
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                  type="radio"
+                  name="passwordOption"
+                  value="auto"
+                  checked={userFormData.passwordOption === "auto"}
+                  onChange={(e) => setUserFormData({ ...userFormData, passwordOption: e.target.value })}
+                  className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Role</label>
-                <select
-                  value={userFormData.role}
-                  onChange={(e) => setUserFormData({ ...userFormData, role: e.target.value })}
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-                >
-                  <option value="">Select role</option>
-                  {roles.map((role) => (
-                    <option key={role._id} value={role.name}>
-                      {role.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <span>Auto-generate & Email Password</span>
+              </label>
             </div>
 
-            <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
-              <button
-                onClick={() => setShowUserModal(false)}
-                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateUser}
-                className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
-              >
-                Create User
-              </button>
-            </div>
+            {/* Custom Password Input */}
+            {userFormData.passwordOption === "custom" && (
+              <input
+                type="password"
+                value={userFormData.password || ""}
+                onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
+                placeholder="Enter password"
+                className="mt-2 w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+              />
+            )}
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Modal Footer */}
+      <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
+        <button
+          onClick={() => setShowUserModal(false)}
+          className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleCreateUser}
+          className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+        >
+          Create User
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
       {/* Alert Component */}
       <Alert
