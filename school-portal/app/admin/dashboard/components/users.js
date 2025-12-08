@@ -93,7 +93,7 @@ export default function Users() {
       <div className="bg-white rounded-xl shadow-2xl p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">User Management</h2>
+            <h2 className="text-lg font-bold text-gray-900">Manage Users</h2>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-3 w-full md:w-auto">
