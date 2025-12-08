@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Alert from '../../../components/Alert.js';
 import Modal from '../../../components/Modal';
 import RolePermission from  "./components/rolepermission";
+import Users from './components/users.js';
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
@@ -421,12 +422,7 @@ export default function AdminDashboard() {
             )}
 
             {activeTab === 'users' && (
-              <div className="p-6">
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">User Management</h2>
-                  <p className="text-gray-600">User management section coming soon...</p>
-                </div>
-              </div>
+           <Users></Users>
             )}
 
             {activeTab === 'roles' && (

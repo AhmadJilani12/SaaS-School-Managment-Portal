@@ -408,9 +408,6 @@ console.log("Permissions", setEditFormData.permissions);
   )}
 </div>
 
-
-
-
 </div>
 
       {/* Modal Create Role Start */}
