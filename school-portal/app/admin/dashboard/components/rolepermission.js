@@ -124,9 +124,6 @@ const loadData = async () => {
     setLoading(false);
   }
 };
-
-
-
   useEffect(() => {
     loadData();
   }, []);
