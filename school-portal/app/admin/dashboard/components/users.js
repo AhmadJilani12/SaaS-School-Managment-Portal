@@ -52,7 +52,7 @@ export default function Users() {
       setLoading(false);
     }
   };
-  
+
   // Fetch dynamic roles from API
   const loadRoles = async () => {
     try {
@@ -74,49 +74,49 @@ export default function Users() {
   }, []);
 
 
- const handleCreateUser = async () => {
-  if (!userFormData.name.trim() || !userFormData.email.trim()) {
-    triggerAlert("error", "Name and Email are required");
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: userFormData.name,
-        email: userFormData.email,
-        role: userFormData.role,
-        password: userFormData.password, // custom password only
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!data.success) {
-      triggerAlert("error", data.message);
+  const handleCreateUser = async () => {
+    if (!userFormData.name.trim() || !userFormData.email.trim()) {
+      triggerAlert("error", "Name and Email are required");
       return;
     }
 
-    // Add user to UI list (optional)
-    setUsers([data.user, ...users]);
+    try {
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: userFormData.name,
+          email: userFormData.email,
+          role: userFormData.role,
+          password: userFormData.password, // custom password only
+        }),
+      });
 
-    triggerAlert("success", "User created successfully");
-    setShowUserModal(false);
-    setUserFormData({
-      name: "",
-      email: "",
-      role: "",
-      password: "",
-    });
+      const data = await res.json();
 
-  } catch (error) {
-    triggerAlert("error", "Failed to create user");
-  }
-};
+      if (!data.success) {
+        triggerAlert("error", data.message);
+        return;
+      }
+
+      // Add user to UI list (optional)
+      setUsers([data.user, ...users]);
+
+      triggerAlert("success", "User created successfully");
+      setShowUserModal(false);
+      setUserFormData({
+        name: "",
+        email: "",
+        role: "",
+        password: "",
+      });
+
+    } catch (error) {
+      triggerAlert("error", "Failed to create user");
+    }
+  };
 
 
   const handleDeleteUser = (id) => {
@@ -187,43 +187,43 @@ export default function Users() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.role || "N/A"}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm flex items-center space-x-2">
-  {/* View */}
-  <button
-    onClick={() => alert(`Viewing ${user.name}`)}
-    className="p-1 text-blue-500 hover:text-blue-700 rounded-full transition-colors"
-    title="View"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-    </svg>
-  </button>
+                        {/* View */}
+                        <button
+                          onClick={() => alert(`Viewing ${user.name}`)}
+                          className="p-1 text-blue-500 hover:text-blue-700 rounded-full transition-colors"
+                          title="View"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </button>
 
-  {/* Edit */}
-  <button
-    onClick={() => {
-      setUserFormData(user);
-      setShowUserModal(true);
-    }}
-    className="p-1 text-yellow-500 hover:text-yellow-700 rounded-full transition-colors"
-    title="Edit"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
-    </svg>
-  </button>
+                        {/* Edit */}
+                        <button
+                          onClick={() => {
+                            setUserFormData(user);
+                            setShowUserModal(true);
+                          }}
+                          className="p-1 text-yellow-500 hover:text-yellow-700 rounded-full transition-colors"
+                          title="Edit"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
+                        </button>
 
-  {/* Delete */}
-  <button
-    onClick={() => handleDeleteUser(user._id)}
-    className="p-1 text-red-500 hover:text-red-700 rounded-full transition-colors"
-    title="Delete"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v0a2 2 0 002 2h4a2 2 0 002-2v0a2 2 0 00-2-2m-4 0v0" />
-    </svg>
-  </button>
-</td>
+                        {/* Delete */}
+                        <button
+                          onClick={() => handleDeleteUser(user._id)}
+                          className="p-1 text-red-500 hover:text-red-700 rounded-full transition-colors"
+                          title="Delete"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v0a2 2 0 002 2h4a2 2 0 002-2v0a2 2 0 00-2-2m-4 0v0" />
+                          </svg>
+                        </button>
+                      </td>
                     </tr>
                   ))
                 ) : (
@@ -250,9 +250,8 @@ export default function Users() {
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
-                    className={`px-3 py-1 rounded ${
-                      currentPage === i + 1 ? "bg-indigo-500 text-white" : "bg-gray-200 hover:bg-gray-300"
-                    }`}
+                    className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-indigo-500 text-white" : "bg-gray-200 hover:bg-gray-300"
+                      }`}
                   >
                     {i + 1}
                   </button>
@@ -271,156 +270,143 @@ export default function Users() {
       </div>
 
       {/* Create User Modal */}
-{showUserModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" style={{marginTop:"0px"}}>
-    <div className="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-      {/* Modal Header */}
-      <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white">Create New User</h2>
-        <button
-          onClick={() => setShowUserModal(false)}
-          className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
-        >
-          ✕
-        </button>
-      </div>
-
-      {/* Modal Body */}
-      <div className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">Name *</label>
-            <input
-              type="text"
-              value={userFormData.name}
-              onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
-              placeholder="Enter full name"
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">Email *</label>
-            <input
-              type="email"
-              value={userFormData.email}
-              onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
-              placeholder="Enter email address"
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-            />
-          </div>
-
-          {/* Role */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">Role</label>
-            <select
-              value={userFormData.role}
-              onChange={(e) => setUserFormData({ ...userFormData, role: e.target.value })}
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-            >
-              <option value="">Select role</option>
-              {roles.map((role) => (
-                <option key={role._id} value={role.name}>
-                  {role.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Active Toggle */}
-          <div className="flex items-center space-x-3">
-            <label className="text-sm font-semibold text-gray-900">Active</label>
-            <button
-              type="button"
-              onClick={() => setUserFormData({ ...userFormData, isActive: !userFormData.isActive })}
-              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 focus:outline-none ${
-                userFormData.isActive ? "bg-indigo-500" : "bg-gray-300"
-              }`}
-              aria-pressed={userFormData.isActive}
-              aria-label="Toggle Active Status"
-            >
-              <span
-                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-                  userFormData.isActive ? "translate-x-6" : "translate-x-0"
-                }`}
-              />
-            </button>
-          </div>
-
-          {/* Password Option - spans two columns */}
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-900 mb-2">Password Option</label>
-            <div className="flex flex-col space-y-2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="passwordOption"
-                  value="custom"
-                  checked={userFormData.passwordOption === "custom"}
-                  onChange={(e) => setUserFormData({ ...userFormData, passwordOption: e.target.value })}
-                  className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                />
-                <span>Set Custom Password</span>
-              </label>
-   {/* Auto-generate password */}
-    <label className="flex items-center space-x-2">
-      <input
-        type="radio"
-        name="passwordOption"
-        value="auto"
-        checked={userFormData.passwordOption === "auto"}
-        onChange={(e) => {
-          const value = e.target.value;
-          setUserFormData({
-            ...userFormData,
-            passwordOption: value,
-            password: "", // reset custom password
-          });
-
-          if (value === "auto") {
-            triggerAlert("info", "This feature will be available soon");
-          }
-        }}
-        className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-      />
-      <span>Auto-generate & Email Password</span>
-    </label>
+      {showUserModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" style={{ marginTop: "0px" }}>
+          <div className="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Create New User</h2>
+              <button
+                onClick={() => setShowUserModal(false)}
+                className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
             </div>
 
-            {/* Custom Password Input */}
-            {userFormData.passwordOption === "custom" && (
-              <input
-                type="password"
-                value={userFormData.password || ""}
-                onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
-                placeholder="Enter password"
-                className="mt-2 w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-              />
-            )}
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Name *</label>
+                  <input
+                    type="text"
+                    value={userFormData.name}
+                    onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
+                    placeholder="Enter full name"
+                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Email *</label>
+                  <input
+                    type="email"
+                    value={userFormData.email}
+                    onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
+                    placeholder="Enter email address"
+                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                  />
+                </div>
+
+                {/* Role */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Role</label>
+                  <select
+                    value={userFormData.role}
+                    onChange={(e) => setUserFormData({ ...userFormData, role: e.target.value })}
+                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                  >
+                    <option value="">Select role</option>
+                    {roles.map((role) => (
+                      <option key={role._id} value={role.name}>
+                        {role.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Active Toggle */}
+                <div className="flex items-center space-x-3">
+                  <label className="text-sm font-semibold text-gray-900">Active</label>
+                  <button
+                    type="button"
+                    onClick={() => setUserFormData({ ...userFormData, isActive: !userFormData.isActive })}
+                    className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 focus:outline-none ${userFormData.isActive ? "bg-indigo-500" : "bg-gray-300"
+                      }`}
+                    aria-pressed={userFormData.isActive}
+                    aria-label="Toggle Active Status"
+                  >
+                    <span
+                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${userFormData.isActive ? "translate-x-6" : "translate-x-0"
+                        }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Password Option - spans two columns */}
+                <div className="col-span-1 md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">Password Option</label>
+                  <div className="flex flex-col space-y-2">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="passwordOption"
+                        value="custom"
+                        checked={userFormData.passwordOption === "custom"}
+                        onChange={(e) => setUserFormData({ ...userFormData, passwordOption: e.target.value })}
+                        className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                      />
+                      <span>Set Custom Password</span>
+                    </label>
+                    {/* Auto-generate password (Disabled) */}
+                    <label className="flex items-center space-x-2 opacity-50 cursor-not-allowed">
+                      <input
+                        type="radio"
+                        name="passwordOption"
+                        value="auto"
+                        disabled
+                        className="w-4 h-4 text-indigo-600 border-gray-300"
+                      />
+                      <span>Auto-generate & Email Password (Coming Soon)</span>
+                    </label>
+
+                  </div>
+
+                  {/* Custom Password Input */}
+                  {userFormData.passwordOption === "custom" && (
+                    <input
+                      type="password"
+                      value={userFormData.password || ""}
+                      onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
+                      placeholder="Enter password"
+                      className="mt-2 w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
+              <button
+                onClick={() => setShowUserModal(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateUser}
+                className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+              >
+                Create User
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Modal Footer */}
-      <div className="sticky bottom-0 bg-gray-100 px-6 py-4 flex items-center justify-end space-x-3 border-t">
-        <button
-          onClick={() => setShowUserModal(false)}
-          className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleCreateUser}
-          className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
-        >
-          Create User
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
 
 
