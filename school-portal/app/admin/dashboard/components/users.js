@@ -364,18 +364,29 @@ export default function Users() {
                 />
                 <span>Set Custom Password</span>
               </label>
+   {/* Auto-generate password */}
+    <label className="flex items-center space-x-2">
+      <input
+        type="radio"
+        name="passwordOption"
+        value="auto"
+        checked={userFormData.passwordOption === "auto"}
+        onChange={(e) => {
+          const value = e.target.value;
+          setUserFormData({
+            ...userFormData,
+            passwordOption: value,
+            password: "", // reset custom password
+          });
 
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="passwordOption"
-                  value="auto"
-                  checked={userFormData.passwordOption === "auto"}
-                  onChange={(e) => setUserFormData({ ...userFormData, passwordOption: e.target.value })}
-                  className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                />
-                <span>Auto-generate & Email Password</span>
-              </label>
+          if (value === "auto") {
+            triggerAlert("info", "This feature will be available soon");
+          }
+        }}
+        className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+      />
+      <span>Auto-generate & Email Password</span>
+    </label>
             </div>
 
             {/* Custom Password Input */}
