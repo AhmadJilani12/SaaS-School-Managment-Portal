@@ -12,11 +12,15 @@ export default function Users() {
   const [showAlert, setShowAlert] = useState(false);
   const [roles, setRoles] = useState([]); // <-- for dynamic roles
 
-  const [userFormData, setUserFormData] = useState({
-    name: "",
-    email: "",
-    role: "",
-  });
+const [userFormData, setUserFormData] = useState({
+  firstName: "",
+  lastName: "",
+  email: "",
+  role: "",
+  isActive: true,
+  passwordOption: "custom",
+  password: "",
+});
 
   const [currentPage, setCurrentPage] = useState(1);
   const USERS_PER_PAGE = 5;
@@ -288,16 +292,30 @@ export default function Users() {
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 {/* Name */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">Name *</label>
-                  <input
-                    type="text"
-                    value={userFormData.name}
-                    onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
-                    placeholder="Enter full name"
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-                  />
-                </div>
+                {/* First Name */}
+<div>
+  <label className="block text-sm font-semibold text-gray-900 mb-2">First Name *</label>
+  <input
+    type="text"
+    value={userFormData.firstName}
+    onChange={(e) => setUserFormData({ ...userFormData, firstName: e.target.value })}
+    placeholder="Enter first name"
+    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+  />
+</div>
+
+{/* Last Name */}
+<div>
+  <label className="block text-sm font-semibold text-gray-900 mb-2">Last Name *</label>
+  <input
+    type="text"
+    value={userFormData.lastName}
+    onChange={(e) => setUserFormData({ ...userFormData, lastName: e.target.value })}
+    placeholder="Enter last name"
+    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+  />
+</div>
+
 
                 {/* Email */}
                 <div>
