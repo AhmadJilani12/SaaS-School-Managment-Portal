@@ -52,7 +52,6 @@ export default function Users() {
       setLoading(false);
     }
   };
-
   
   // Fetch dynamic roles from API
   const loadRoles = async () => {
@@ -75,18 +74,50 @@ export default function Users() {
   }, []);
 
 
-  const handleCreateUser = () => {
-    if (!userFormData.name.trim() || !userFormData.email.trim()) {
-      triggerAlert("error", "Name and Email are required");
+ const handleCreateUser = async () => {
+  if (!userFormData.name.trim() || !userFormData.email.trim()) {
+    triggerAlert("error", "Name and Email are required");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: userFormData.name,
+        email: userFormData.email,
+        role: userFormData.role,
+        password: userFormData.password, // custom password only
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      triggerAlert("error", data.message);
       return;
     }
 
-    const newUser = { _id: users.length + 1, ...userFormData };
-    setUsers([newUser, ...users]);
+    // Add user to UI list (optional)
+    setUsers([data.user, ...users]);
+
     triggerAlert("success", "User created successfully");
     setShowUserModal(false);
-    setUserFormData({ name: "", email: "", role: "" });
-  };
+    setUserFormData({
+      name: "",
+      email: "",
+      role: "",
+      password: "",
+    });
+
+  } catch (error) {
+    triggerAlert("error", "Failed to create user");
+  }
+};
+
 
   const handleDeleteUser = (id) => {
     setUsers(users.filter((user) => user._id !== id));
@@ -193,7 +224,6 @@ export default function Users() {
     </svg>
   </button>
 </td>
-
                     </tr>
                   ))
                 ) : (
@@ -241,7 +271,7 @@ export default function Users() {
       </div>
 
       {/* Create User Modal */}
- {showUserModal && (
+{showUserModal && (
   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 mt-0">
     <div className="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
       {/* Modal Header */}
@@ -257,7 +287,7 @@ export default function Users() {
 
       {/* Modal Body */}
       <div className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           {/* Name */}
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-2">Name *</label>
@@ -299,7 +329,27 @@ export default function Users() {
             </select>
           </div>
 
-          {/* Password Option */}
+          {/* Active Toggle */}
+          <div className="flex items-center space-x-3">
+            <label className="text-sm font-semibold text-gray-900">Active</label>
+            <button
+              type="button"
+              onClick={() => setUserFormData({ ...userFormData, isActive: !userFormData.isActive })}
+              className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 focus:outline-none ${
+                userFormData.isActive ? "bg-indigo-500" : "bg-gray-300"
+              }`}
+              aria-pressed={userFormData.isActive}
+              aria-label="Toggle Active Status"
+            >
+              <span
+                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+                  userFormData.isActive ? "translate-x-6" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Password Option - spans two columns */}
           <div className="col-span-1 md:col-span-2">
             <label className="block text-sm font-semibold text-gray-900 mb-2">Password Option</label>
             <div className="flex flex-col space-y-2">
@@ -360,6 +410,8 @@ export default function Users() {
     </div>
   </div>
 )}
+
+
 
 
       {/* Alert Component */}
