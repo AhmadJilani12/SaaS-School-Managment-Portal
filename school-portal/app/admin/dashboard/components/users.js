@@ -79,7 +79,7 @@ const [userFormData, setUserFormData] = useState({
 
 
   const handleCreateUser = async () => {
-    if (!userFormData.name.trim() || !userFormData.email.trim()) {
+    if (!userFormData.firstName.trim() || !userFormData.email.trim() || !userFormData.lastName.trim()) {
       triggerAlert("error", "Name and Email are required");
       return;
     }
