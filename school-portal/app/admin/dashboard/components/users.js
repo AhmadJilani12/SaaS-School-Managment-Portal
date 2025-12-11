@@ -35,13 +35,13 @@ const [userFormData, setUserFormData] = useState({
 
   // Dummy Users
   const DUMMY_USERS = [
-    { _id: 1, name: "Alice", email: "alice@example.com", role: "Admin" },
-    { _id: 2, name: "Bob", email: "bob@example.com", role: "Editor" },
-    { _id: 3, name: "Charlie", email: "charlie@example.com", role: "Viewer" },
-    { _id: 4, name: "David", email: "david@example.com", role: "Admin" },
-    { _id: 5, name: "Eve", email: "eve@example.com", role: "Editor" },
-    { _id: 6, name: "Frank", email: "frank@example.com", role: "Viewer" },
-    { _id: 7, name: "Grace", email: "grace@example.com", role: "Admin" },
+    { _id: 1, firstName: "Alice",  lastName: "Alice",     email: "alice@example.com", role: "Admin" },
+    { _id: 2, firstName: "Bob",    lastName: "Alice",     email: "bob@example.com", role: "Editor" },
+    { _id: 3, firstName: "Charlie",  lastName: "Alice",   email: "charlie@example.com", role: "Viewer" },
+    { _id: 4, firstName: "David",    lastName: "Alice"            ,  email: "david@example.com", role: "Admin" },
+    { _id: 5, firstName: "Eve",   lastName: "Alice",                  email: "eve@example.com", role: "Editor" },
+    { _id: 6, firstName: "Frank",  lastName: "Alice",   email: "frank@example.com", role: "Viewer" },
+    { _id: 7, firstName: "Grace", lastName: "Alice", email: "grace@example.com", role: "Admin" },
   ];
 
   // Load users (simulate API)
@@ -79,6 +79,8 @@ const [userFormData, setUserFormData] = useState({
 
 
   const handleCreateUser = async () => {
+
+    console.log("Creating user with data:", userFormData);
     if (!userFormData.firstName.trim() || !userFormData.email.trim() || !userFormData.lastName.trim()) {
       triggerAlert("error", "Name and Email are required");
       return;
@@ -91,10 +93,12 @@ const [userFormData, setUserFormData] = useState({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: userFormData.name,
+          firstName: userFormData.firstName,
+          lastName: userFormData.lastName,
           email: userFormData.email,
           role: userFormData.role,
           password: userFormData.password, // custom password only
+          isActive: userFormData.isActive,
         }),
       });
 
@@ -111,7 +115,8 @@ const [userFormData, setUserFormData] = useState({
       triggerAlert("success", "User created successfully");
       setShowUserModal(false);
       setUserFormData({
-        name: "",
+       firstName  : "",
+        lastName: "",
         email: "",
         role: "",
         password: "",
@@ -131,7 +136,8 @@ const [userFormData, setUserFormData] = useState({
   // Search Filter
   const filteredUsers = users.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );

@@ -7,18 +7,24 @@ import bcrypt from "bcryptjs";
 export async function POST(req) {
   try {
     await connectDB();
+const { firstName, lastName, email, role, password, isActive } = await req.json();
 
-    const { name, email, role, password } = await req.json();
+const fName = firstName?.trim();
+const lName = lastName?.trim();
+const mail = email?.trim();
 
-    // Validate
-    if (!name || !email) {
-      return Response.json(
-        { success: false, message: "Name & Email are required" },
-        { status: 400 }
-      );
-    }
+if (!fName || !lName || !mail) {
+  return Response.json(
+    { success: false, message: "Name & Email are required" },
+    { status: 400 }
+  );
+}
+    if(role === undefined)
+{
 
-    // Only custom password for now
+
+}
+      // Only custom password for now
     const hashedPassword = await bcrypt.hash(password || "123456", 10);
 
     // Find role ID
@@ -33,10 +39,12 @@ export async function POST(req) {
 
     // Create user
     const user = await User.create({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
       roles: [selectedRole._id],
+      isActive : isActive !== undefined ? isActive : true,
     });
 
     return Response.json({ success: true, user }, { status: 201 });
