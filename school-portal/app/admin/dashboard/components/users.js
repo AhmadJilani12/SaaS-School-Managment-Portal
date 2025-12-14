@@ -183,7 +183,8 @@ const [userFormData, setUserFormData] = useState({
             <table className="min-w-full divide-y divide-gray-200 rounded-lg shadow-lg transform transition hover:-translate-y-1 hover:shadow-2xl">
               <thead className="bg-indigo-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">First Name</th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Last Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Email</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Role</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
