@@ -58,3 +58,27 @@ if (!fName || !lName || !mail) {
 }
 
 
+//get users route 
+
+export async function GET() {
+  try {
+    await connectDB();
+
+    const users = await User.find()
+      .populate("roles", "name") // sirf role ka name
+      .select("-password")       // password hide
+      .lean();
+
+    return Response.json(
+      { success: true, users },
+      { status: 200 }
+    );
+
+  } catch (error) {
+    return Response.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
+  }
+}
+
