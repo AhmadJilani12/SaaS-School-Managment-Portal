@@ -194,6 +194,7 @@ const [userFormData, setUserFormData] = useState({
                   currentUsers.map((user) => (
                     <tr key={user._id} className="hover:bg-indigo-50 transition-all">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.firstName}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.lastName}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.role || "N/A"}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm flex items-center space-x-2">
