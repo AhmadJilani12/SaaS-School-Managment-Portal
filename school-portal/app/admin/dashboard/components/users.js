@@ -93,7 +93,16 @@ const [userFormData, setUserFormData] = useState({
     triggerAlert("error", "Role cannot be empty");
     return;
   }
-  
+
+   // Password validation
+  if (!userFormData.password || userFormData.password.trim().length < 8) {
+    triggerAlert(
+      "error",
+      "Password must be at least 8 characters long"
+    );
+    return;
+  }
+
 
     try {
       const res = await fetch("/api/users", {
