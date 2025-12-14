@@ -86,6 +86,15 @@ const [userFormData, setUserFormData] = useState({
       return;
     }
 
+
+    
+  // Role validation
+  if (!userFormData.role || userFormData.role === "Select Role") {
+    triggerAlert("error", "Role cannot be empty");
+    return;
+  }
+  
+
     try {
       const res = await fetch("/api/users", {
         method: "POST",
