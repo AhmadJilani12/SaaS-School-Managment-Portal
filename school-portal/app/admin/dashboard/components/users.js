@@ -11,6 +11,7 @@ export default function Users() {
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [roles, setRoles] = useState([]); // <-- for dynamic roles
+  const [showPassword, setShowPassword] = useState(false);
 
 const [userFormData, setUserFormData] = useState({
   firstName: "",
@@ -420,15 +421,31 @@ const [userFormData, setUserFormData] = useState({
                   </div>
 
                   {/* Custom Password Input */}
-                  {userFormData.passwordOption === "custom" && (
-                    <input
-                      type="password"
-                      value={userFormData.password || ""}
-                      onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
-                      placeholder="Enter password"
-                      className="mt-2 w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-                    />
-                  )}
+                 {/* Custom Password Input */}
+{userFormData.passwordOption === "custom" && (
+  <div className="relative mt-2">
+    <input
+      type={showPassword ? "text" : "password"}
+      value={userFormData.password || ""}
+      onChange={(e) =>
+        setUserFormData({ ...userFormData, password: e.target.value })
+      }
+      placeholder="Enter password"
+      className="w-full px-4 py-2 pr-12 border-2 border-gray-300 rounded-lg
+                 focus:outline-none focus:border-indigo-500
+                 focus:ring-2 focus:ring-indigo-500/10"
+    />
+
+    {/* Eye Icon */}
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-600"
+    >
+      {showPassword ? "🙈" : "👁️"}
+    </button>
+  </div>
+)}
                 </div>
               </div>
             </div>
