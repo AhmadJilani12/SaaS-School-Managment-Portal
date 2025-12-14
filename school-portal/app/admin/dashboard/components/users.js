@@ -23,6 +23,17 @@ const [userFormData, setUserFormData] = useState({
   password: "",
 });
 
+const emptyUserForm = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  role: "",
+  isActive: true,
+  passwordOption: "custom",
+  password: "",
+};
+
+
   const [currentPage, setCurrentPage] = useState(1);
   const USERS_PER_PAGE = 5;
 
@@ -104,19 +115,9 @@ const [userFormData, setUserFormData] = useState({
         return;
       }
 
-      // Add user to UI list (optional)
-      setUsers([data.user, ...users]);
-
       triggerAlert("success", "User created successfully");
       setShowUserModal(false);
-      setUserFormData({
-       firstName  : "",
-        lastName: "",
-        email: "",
-        role: "",
-        password: "",
-      });
-
+        setUserFormData(emptyUserForm); // 🔥 reset form
     } catch (error) {
       triggerAlert("error", "Failed to create user");
     }
@@ -381,6 +382,7 @@ const filteredUsers = useMemo(() => {
                         type="radio"
                         name="passwordOption"
                         value="custom"
+
                         checked={userFormData.passwordOption === "custom"}
                         onChange={(e) => setUserFormData({ ...userFormData, passwordOption: e.target.value })}
                         className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
@@ -408,6 +410,8 @@ const filteredUsers = useMemo(() => {
     <input
       type={showPassword ? "text" : "password"}
       value={userFormData.password || ""}
+      
+  autoComplete="new-password"   // 🔥 THIS FIXES IT
       onChange={(e) =>
         setUserFormData({ ...userFormData, password: e.target.value })
       }
