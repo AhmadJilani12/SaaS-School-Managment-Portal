@@ -1,4 +1,4 @@
-// /models/User.js
+// imort statement
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
