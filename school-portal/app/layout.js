@@ -2,7 +2,7 @@ import '../styles/globals.css';
 
 export const metadata = {
   title: 'School Portal - SaaS Management System',
-  description: 'A modern school management system built with Next.js',
+  description: 'A modern school management system built with Next.js AND MONGODB DATABSE',
 };
 
 export default function RootLayout({ children }) {

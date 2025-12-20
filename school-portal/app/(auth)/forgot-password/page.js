@@ -60,7 +60,6 @@ export default function ForgotPasswordPage() {
                 {error}
               </div>
             )}
-
             <button 
               type="submit" 
               className="py-3.5 px-4 rounded-lg text-base font-semibold text-white tracking-tight bg-indigo-500 hover:bg-indigo-600 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center"
